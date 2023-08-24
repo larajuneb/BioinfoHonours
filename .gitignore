@@ -1,0 +1,6 @@
+# Ignore PDB files directory
+PDB_files_batch/
+
+# Ignore features directory
+features/
+
