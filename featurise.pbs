@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#PBS -N Lara-featurise
+#PBS -l walltime=10:00:00
+#PBS -l ncpus=8
+#PBS -l mem=12GB
+#PBS -e featurise.err
+#PBS -o featurise.out
+#PBS -q bix
+
+module load python/3.11.1
+python3 edited_SeqPredNN/featurise.py -gm new_SeqPredNN_pdb_subset.csv PDB_files_batch
