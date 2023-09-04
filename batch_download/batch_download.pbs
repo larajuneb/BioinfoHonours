@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#PBS -N batch-download-PDB
+#PBS -l walltime=36:00:00
+#PBS -l ncpus=16
+#PBS -l mem=1GB
+#PBS -e batch.err
+#PBS -o batch.out
+#PBS -q bix
+
+cd /home/23594292/project/data_retrieval/batch_download
+./batch_download.sh -f PDB_id_list.txt -p -o /home/23594292/project/data_retrieval/batch_download/PDB_files_batch
