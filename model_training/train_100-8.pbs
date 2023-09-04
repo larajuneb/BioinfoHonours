@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#PBD -N train_100-8
+#PBS -l walltime=08:00:00
+#PBS -l ncpus=8
+#PBS -l mem=64GB
+#PBS -l ngpus=1
+#PBS -e train_100-8.err
+#PBS -o train_100-8.out
+#PBS -q ee
+#PBS -M 23594292@sun.ac.za
+#PBS -m abe
+
+cd /home/23594292/project/model_training
+module load app/pytorch/1.13
+
+python3 ../edited_SeqPredNN/train_model.py -r 0.8 -t ../test_set_10.txt -e 100 ../features balanced -o epoch_training_100-8

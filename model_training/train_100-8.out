@@ -1,0 +1,359 @@
+Sampling residues:
+-------------------------------
+Done sampling
+
+Model layout:
+Sequential(
+  (0): Linear(in_features=180, out_features=64, bias=True)
+  (1): ReLU()
+  (2): Dropout(p=0.5, inplace=False)
+  (3): Linear(in_features=64, out_features=64, bias=True)
+  (4): ReLU()
+  (5): Dropout(p=0.5, inplace=False)
+  (6): Linear(in_features=64, out_features=64, bias=True)
+  (7): ReLU()
+  (8): Dropout(p=0.5, inplace=False)
+  (9): Linear(in_features=64, out_features=20, bias=True)
+)
+
+Training model
+-------------------------------
+Epoch 1
+Accuracy: 10.251%, Average loss: 0.000630 
+
+Epoch 2
+Accuracy: 16.154%, Average loss: 0.000579 
+
+Epoch 3
+Accuracy: 17.087%, Average loss: 0.000568 
+
+Epoch 4
+Accuracy: 17.607%, Average loss: 0.000560 
+
+Epoch 5
+Accuracy: 17.871%, Average loss: 0.000556 
+
+Epoch 6
+Accuracy: 19.093%, Average loss: 0.000553 
+
+Epoch 7
+Accuracy: 18.957%, Average loss: 0.000552 
+
+Epoch 8
+Accuracy: 19.425%, Average loss: 0.000548 
+
+Epoch 9
+Accuracy: 19.590%, Average loss: 0.000547 
+
+Epoch 10
+Accuracy: 19.684%, Average loss: 0.000547 
+
+Epoch 11
+Accuracy: 19.822%, Average loss: 0.000544 
+
+Epoch 12
+Accuracy: 19.771%, Average loss: 0.000545 
+
+Epoch 13
+Accuracy: 19.609%, Average loss: 0.000547 
+
+Epoch 14
+Accuracy: 20.216%, Average loss: 0.000544 
+
+Epoch 15
+Accuracy: 19.871%, Average loss: 0.000541 
+
+Epoch 16
+Accuracy: 19.872%, Average loss: 0.000541 
+
+Epoch 17
+Accuracy: 20.273%, Average loss: 0.000542 
+
+Epoch 18
+Accuracy: 19.885%, Average loss: 0.000544 
+
+Epoch 19
+Accuracy: 19.919%, Average loss: 0.000543 
+
+Epoch 20
+Accuracy: 20.229%, Average loss: 0.000540 
+
+Epoch 21
+Accuracy: 20.366%, Average loss: 0.000541 
+
+Epoch 22
+Accuracy: 19.921%, Average loss: 0.000542 
+
+Epoch 23
+Accuracy: 20.216%, Average loss: 0.000539 
+
+Epoch 24
+Accuracy: 20.323%, Average loss: 0.000541 
+
+Epoch 25
+Accuracy: 20.623%, Average loss: 0.000539 
+
+Epoch 26
+Accuracy: 20.497%, Average loss: 0.000539 
+
+Epoch 27
+Accuracy: 20.442%, Average loss: 0.000541 
+
+Epoch 28
+Accuracy: 20.526%, Average loss: 0.000539 
+
+Epoch 29
+Accuracy: 20.910%, Average loss: 0.000538 
+
+Epoch 30
+Accuracy: 20.881%, Average loss: 0.000539 
+
+Epoch 31
+Accuracy: 20.540%, Average loss: 0.000537 
+
+Epoch 32
+Accuracy: 20.726%, Average loss: 0.000538 
+
+Epoch 33
+Accuracy: 20.612%, Average loss: 0.000539 
+
+Epoch 34
+Accuracy: 20.654%, Average loss: 0.000538 
+
+Epoch 35
+Accuracy: 20.599%, Average loss: 0.000538 
+
+Epoch 36
+Accuracy: 20.857%, Average loss: 0.000537 
+
+Epoch 37
+Accuracy: 20.729%, Average loss: 0.000536 
+
+Epoch 38
+Accuracy: 20.610%, Average loss: 0.000536 
+
+Epoch 39
+Accuracy: 20.960%, Average loss: 0.000537 
+
+Epoch 40
+Accuracy: 20.789%, Average loss: 0.000537 
+
+Epoch 41
+Accuracy: 20.956%, Average loss: 0.000537 
+
+Epoch 42
+Accuracy: 20.674%, Average loss: 0.000537 
+
+Epoch 43
+Accuracy: 20.615%, Average loss: 0.000537 
+
+Epoch 44
+Accuracy: 20.708%, Average loss: 0.000537 
+
+Epoch 45
+Accuracy: 20.976%, Average loss: 0.000535 
+
+Epoch 46
+Accuracy: 20.950%, Average loss: 0.000536 
+
+Epoch 47
+Accuracy: 20.729%, Average loss: 0.000538 
+
+Epoch 48
+Accuracy: 20.929%, Average loss: 0.000535 
+
+Epoch 49
+Accuracy: 21.015%, Average loss: 0.000536 
+
+Epoch 50
+Accuracy: 20.653%, Average loss: 0.000535 
+
+Epoch 51
+Accuracy: 21.110%, Average loss: 0.000535 
+
+Epoch 52
+Accuracy: 20.694%, Average loss: 0.000536 
+
+Epoch 53
+Accuracy: 20.925%, Average loss: 0.000535 
+
+Epoch 54
+Accuracy: 21.001%, Average loss: 0.000536 
+
+Epoch 55
+Accuracy: 20.907%, Average loss: 0.000536 
+
+Epoch 56
+Accuracy: 21.166%, Average loss: 0.000535 
+
+Epoch 57
+Accuracy: 21.074%, Average loss: 0.000533 
+
+Epoch 58
+Accuracy: 21.135%, Average loss: 0.000534 
+
+Epoch 59
+Accuracy: 20.836%, Average loss: 0.000537 
+
+Epoch 60
+Accuracy: 21.037%, Average loss: 0.000534 
+
+Epoch 61
+Accuracy: 21.137%, Average loss: 0.000536 
+
+Epoch 62
+Accuracy: 20.856%, Average loss: 0.000536 
+
+Epoch 63
+Accuracy: 21.154%, Average loss: 0.000535 
+
+Epoch 64
+Accuracy: 21.351%, Average loss: 0.000534 
+
+Epoch 65
+Accuracy: 21.226%, Average loss: 0.000535 
+
+Epoch 66
+Accuracy: 21.067%, Average loss: 0.000534 
+
+Epoch 67
+Accuracy: 20.844%, Average loss: 0.000534 
+
+Epoch 68
+Accuracy: 21.101%, Average loss: 0.000535 
+
+Epoch 69
+Accuracy: 20.883%, Average loss: 0.000534 
+
+Epoch 70
+Accuracy: 21.365%, Average loss: 0.000533 
+
+Epoch 71
+Accuracy: 21.160%, Average loss: 0.000534 
+
+Epoch 72
+Accuracy: 21.300%, Average loss: 0.000532 
+
+Epoch 73
+Accuracy: 21.074%, Average loss: 0.000534 
+
+Epoch 74
+Accuracy: 21.514%, Average loss: 0.000534 
+
+Epoch 75
+Accuracy: 21.385%, Average loss: 0.000532 
+
+Epoch 76
+Accuracy: 21.460%, Average loss: 0.000533 
+
+Epoch 77
+Accuracy: 21.038%, Average loss: 0.000533 
+
+Epoch 78
+Accuracy: 21.059%, Average loss: 0.000534 
+
+Epoch 79
+Accuracy: 21.105%, Average loss: 0.000535 
+
+Epoch 80
+Accuracy: 21.352%, Average loss: 0.000531 
+
+Epoch 81
+Accuracy: 21.399%, Average loss: 0.000533 
+
+Epoch 82
+Accuracy: 21.162%, Average loss: 0.000532 
+
+Epoch 83
+Accuracy: 21.279%, Average loss: 0.000532 
+
+Epoch 84
+Accuracy: 21.024%, Average loss: 0.000534 
+
+Epoch 85
+Accuracy: 21.115%, Average loss: 0.000533 
+
+Epoch 86
+Accuracy: 21.208%, Average loss: 0.000533 
+
+Epoch 87
+Accuracy: 21.193%, Average loss: 0.000533 
+
+Epoch 88
+Accuracy: 21.498%, Average loss: 0.000534 
+
+Epoch 89
+Accuracy: 21.205%, Average loss: 0.000535 
+
+Epoch 90
+Accuracy: 21.211%, Average loss: 0.000534 
+
+Epoch 91
+Accuracy: 21.184%, Average loss: 0.000535 
+
+Epoch 92
+Accuracy: 21.172%, Average loss: 0.000532 
+
+Epoch 93
+Accuracy: 21.387%, Average loss: 0.000532 
+
+Epoch 94
+Accuracy: 21.539%, Average loss: 0.000532 
+
+Epoch 95
+Accuracy: 21.511%, Average loss: 0.000532 
+
+Epoch 96
+Accuracy: 21.294%, Average loss: 0.000533 
+
+Epoch 97
+Accuracy: 21.259%, Average loss: 0.000532 
+
+Epoch 98
+Accuracy: 21.281%, Average loss: 0.000534 
+
+Epoch 99
+Accuracy: 21.268%, Average loss: 0.000531 
+
+Epoch 100
+Accuracy: 20.957%, Average loss: 0.000533 
+
+Done training
+
+Final model validation
+-------------------------------
+Classification report:
+
+              precision    recall  f1-score   support
+
+         HIS       0.20      0.00      0.00     32832
+         ARG       0.00      0.00      0.00     70229
+         LYS       0.11      0.67      0.18     79061
+         GLN       0.13      0.00      0.00     51517
+         GLU       0.41      0.00      0.01     90905
+         ASP       0.43      0.15      0.22     82839
+         ASN       0.34      0.02      0.04     60202
+         GLY       0.64      0.69      0.66    106270
+         ALA       0.37      0.07      0.11    118108
+         SER       0.15      0.42      0.22     86896
+         THR       0.40      0.02      0.04     78538
+         PRO       0.49      0.69      0.57     65274
+         CYS       0.10      0.14      0.12     18763
+         VAL       0.31      0.12      0.17    101077
+         ILE       0.21      0.30      0.25     78802
+         MET       0.12      0.01      0.02     30016
+         LEU       0.39      0.01      0.03    128029
+         PHE       0.11      0.39      0.17     56658
+         TYR       0.38      0.00      0.00     50861
+         TRP       0.13      0.05      0.07     20682
+
+    accuracy                           0.21   1407559
+   macro avg       0.27      0.19      0.14   1407559
+weighted avg       0.31      0.21      0.17   1407559
+
+Note: precision and F-scores are set to 0.0 for classes that have no predictions
+Cohen kappa score:0.16298586941069648
+
+Generating graphs...
+
+Saved PyTorch Model State to model_parameters.pth
