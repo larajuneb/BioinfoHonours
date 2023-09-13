@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBD -N train_200-9
+#PBS -l walltime=08:00:00
+#PBS -l select=1:ncpus=8:mem=64GB:ngpus=1:Qlist=ee
+#PBS -e train_200-9.err
+#PBS -o train_200-9.out
+#PBS -M 23594292@sun.ac.za
+#PBS -m abe
+
+cd /home/23594292/project/model_training
+module load app/pytorch/1.13
+
+python3 ../edited_SeqPredNN/train_model.py -r 0.9 -t ../test_set_5.txt -e 200 ../features unbalanced -o epoch_training_200-9
