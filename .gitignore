@@ -5,4 +5,4 @@ PDB_files_batch/
 features/
 
 #Ignore pycache
-edited_SeqPredNN/__pycache__/
+edited_SeqPredNN/__pycache__
