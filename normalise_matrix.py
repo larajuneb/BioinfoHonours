@@ -6,6 +6,7 @@ path = sys.argv[1]
 
 unnormalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
 normalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
+rounded_normalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
 
 predicted_res = ""
 true_res = ""
@@ -50,13 +51,23 @@ for row in range(20):
     total_check = 0
     for col in range (20):
         normalised_matrix[row][col] = unnormalised_matrix[row][col] / support_dict.get(res_name)
+        rounded_normalised_matrix[row][col] = round(unnormalised_matrix[row][col] / support_dict.get(res_name), 4)
         line += str(round(normalised_matrix[row][col], 3)) + ", "
         total_check += normalised_matrix[row][col]
     line += "==(" + str(total_check) + ")"
     print(line)
 
-# build csv, example code: 
-# with open("new_SeqPredNN_pdb_subset.csv", mode="w") as file:
-#     file.write("Protein,Filename,Chain\n") #first line
-#     for entry in official_identifiers_list:
-#         file.write(str(entry[0]) + "," + str(entry[0]) + ".pdb.gz," + str(entry[1]) + "\n")
+# build csv
+with open("normalised_matrix.csv", mode="w") as file:
+    file.write(" ,HIS,ARG,LYS,GLN,GLU,ASP,ASN,GLY,ALA,SER,THR,PRO,CYS,VAL,ILE,MET,LEU,PHE,TYR,TRP\n") #first line
+    counter = 0
+    for res_list in normalised_matrix:
+        file.write(list(res_dict)[counter] + "," + ",".join(map(str, res_list)) + "\n")
+        counter += 1
+
+with open("rounded_normalised_matrix.csv", mode="w") as file:
+    file.write(" ,HIS,ARG,LYS,GLN,GLU,ASP,ASN,GLY,ALA,SER,THR,PRO,CYS,VAL,ILE,MET,LEU,PHE,TYR,TRP\n") #first line
+    counter = 0
+    for res_list in rounded_normalised_matrix:
+        file.write(list(res_dict)[counter] + "," + ",".join(map(str, res_list)) + "\n")
+        counter += 1
