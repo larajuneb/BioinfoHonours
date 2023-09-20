@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#PBS -N os-train_300-6
+#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=8:mem=64GB:ngpus=1:Qlist=ee
+#PBS -e train_300-6.err
+#PBS -o train_300-6.out
+#PBS -M 23594292@sun.ac.za
+#PBS -m abe
+
+cd /home/23594292/project/model_comparisons/oversampled_models
+module load app/pytorch/1.13
+
+python3 /home/23594292/project/SeqPredNN-OVERSAMPLING/SeqPredNN/train_model.py -t /home/23594292/project/test_set_20.txt -e 300 /home/23594292/project/features oversample -o epoch_training_300-6 -v /home/23594292/project/model_comparisons/unbalanced_weighted_models/epoch_training_300-6/validation_set.npz
+
