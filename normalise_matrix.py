@@ -3,6 +3,12 @@ import os
 import sys
 
 path = sys.argv[1]
+mode = ""
+if "oversample" in path:
+    mode = "oversampled"
+    # print("!!!!!!!!!!!!!!!!!!!!")
+if "undersample" in path:
+    mode = "undersampled"
 
 unnormalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
 normalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
@@ -26,7 +32,7 @@ with open(path) as file:
             unnormalised_matrix[predicted_index][true_index] = value
 
 # build unnormalised matrix
-print("UNNORMALISED MATRIX: ")
+# print("UNNORMALISED MATRIX: ")
 line = ""
 for row in range(20):
     line = ""
@@ -37,14 +43,14 @@ for row in range(20):
         res_support += unnormalised_matrix[row][col]
     support_dict[list(res_dict)[row]] = res_support
     line += "==(" + str(res_support) + ")"
-    print(line)
+#     print(line)
 
-print()
-print(support_dict)
-print()
+# print()
+# print(support_dict)
+# print()
 
 # build normalised matrix
-print("NORMALISED MATRIX: ")
+# print("NORMALISED MATRIX: ")
 for row in range(20):
     res_name = list(res_dict)[row]
     line = res_name + ": "
@@ -54,20 +60,37 @@ for row in range(20):
         rounded_normalised_matrix[row][col] = round(unnormalised_matrix[row][col] / support_dict.get(res_name), 4)
         line += str(round(normalised_matrix[row][col], 3)) + ", "
         total_check += normalised_matrix[row][col]
-    line += "==(" + str(total_check) + ")"
-    print(line)
+
+    # temp_list = normalised_matrix[row]
+    # temp_list_sorted = rounded_normalised_matrix[row]
+    # temp_list_sorted.sort(reverse=True)
+    # print(temp_list_sorted)
+    
+    # maximum = max(temp_list)
+    # print("Max for " + res_name + ": " + str(list(res_dict)[temp_list.index(maximum)]) + " with " + str(round(maximum, 4)))
+
+    # del temp_list[row] #remove value for itself from list to find other maximum for another AA
+
+    # maximum = max(temp_list)
+    # print("Max for " + res_name + ": " + str(list(res_dict)[temp_list.index(maximum)]) + " with " + str(round(maximum, 4)))
+    
+    # print()
+    # line += "==(" + str(total_check) + ")"
+    # print(line)
 
 # build csv
-with open("normalised_matrix.csv", mode="w") as file:
+filename = mode + "_normalised_matrix.csv"
+with open(filename, mode="w") as file:
     file.write(" ,HIS,ARG,LYS,GLN,GLU,ASP,ASN,GLY,ALA,SER,THR,PRO,CYS,VAL,ILE,MET,LEU,PHE,TYR,TRP\n") #first line
     counter = 0
     for res_list in normalised_matrix:
         file.write(list(res_dict)[counter] + "," + ",".join(map(str, res_list)) + "\n")
         counter += 1
 
-with open("rounded_normalised_matrix.csv", mode="w") as file:
+filename = mode + "_rounded_normalised_matrix.csv"
+with open(filename, mode="w") as file:
     file.write(" ,HIS,ARG,LYS,GLN,GLU,ASP,ASN,GLY,ALA,SER,THR,PRO,CYS,VAL,ILE,MET,LEU,PHE,TYR,TRP\n") #first line
     counter = 0
     for res_list in rounded_normalised_matrix:
-        file.write(list(res_dict)[counter] + "," + ",".join(map(str, res_list)) + "\n")
+        file.write(list(res_dict)[counter] + " (true)," + ",".join(map(str, res_list)) + "\n")
         counter += 1
