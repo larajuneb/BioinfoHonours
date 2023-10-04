@@ -6,7 +6,6 @@ path = sys.argv[1]
 mode = ""
 if "oversample" in path:
     mode = "oversampled"
-    # print("!!!!!!!!!!!!!!!!!!!!")
 if "undersample" in path:
     mode = "undersampled"
 
@@ -17,7 +16,7 @@ rounded_normalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true 
 predicted_res = ""
 true_res = ""
 res_dict = {"HIS": 0, "ARG": 1, "LYS": 2, "GLN": 3, "GLU": 4, "ASP": 5, "ASN": 6, "GLY": 7, "ALA": 8, "SER": 9, "THR": 10, "PRO": 11, "CYS": 12, "VAL": 13, "ILE": 14, "MET": 15, "LEU": 16, "PHE": 17, "TYR": 18, "TRP": 19}
-support_dict = {"HIS": 0, "ARG": 1, "LYS": 2, "GLN": 3, "GLU": 4, "ASP": 5, "ASN": 6, "GLY": 7, "ALA": 8, "SER": 9, "THR": 10, "PRO": 11, "CYS": 12, "VAL": 13, "ILE": 14, "MET": 15, "LEU": 16, "PHE": 17, "TYR": 18, "TRP": 19}
+support_dict = {"HIS": 0, "ARG": 0, "LYS": 0, "GLN": 0, "GLU": 0, "ASP": 0, "ASN": 0, "GLY": 0, "ALA": 0, "SER": 0, "THR": 0, "PRO": 0, "CYS": 0, "VAL": 0, "ILE": 0, "MET": 0, "LEU": 0, "PHE": 0, "TYR": 0, "TRP": 0}
 
 # read in raw data from csv
 with open(path) as file:
@@ -32,7 +31,6 @@ with open(path) as file:
             unnormalised_matrix[predicted_index][true_index] = value
 
 # build unnormalised matrix
-# print("UNNORMALISED MATRIX: ")
 line = ""
 for row in range(20):
     line = ""
@@ -43,14 +41,8 @@ for row in range(20):
         res_support += unnormalised_matrix[row][col]
     support_dict[list(res_dict)[row]] = res_support
     line += "==(" + str(res_support) + ")"
-#     print(line)
-
-# print()
-# print(support_dict)
-# print()
 
 # build normalised matrix
-# print("NORMALISED MATRIX: ")
 for row in range(20):
     res_name = list(res_dict)[row]
     line = res_name + ": "
@@ -60,23 +52,6 @@ for row in range(20):
         rounded_normalised_matrix[row][col] = round(unnormalised_matrix[row][col] / support_dict.get(res_name), 4)
         line += str(round(normalised_matrix[row][col], 3)) + ", "
         total_check += normalised_matrix[row][col]
-
-    # temp_list = normalised_matrix[row]
-    # temp_list_sorted = rounded_normalised_matrix[row]
-    # temp_list_sorted.sort(reverse=True)
-    # print(temp_list_sorted)
-    
-    # maximum = max(temp_list)
-    # print("Max for " + res_name + ": " + str(list(res_dict)[temp_list.index(maximum)]) + " with " + str(round(maximum, 4)))
-
-    # del temp_list[row] #remove value for itself from list to find other maximum for another AA
-
-    # maximum = max(temp_list)
-    # print("Max for " + res_name + ": " + str(list(res_dict)[temp_list.index(maximum)]) + " with " + str(round(maximum, 4)))
-    
-    # print()
-    # line += "==(" + str(total_check) + ")"
-    # print(line)
 
 # build csv
 filename = mode + "_normalised_matrix.csv"
