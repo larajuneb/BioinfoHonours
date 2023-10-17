@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
+import csv
 
 path = sys.argv[1]
 mode = ""
@@ -15,51 +16,11 @@ if len(sys.argv) < 3:
     print("Please input output mode (0, ..., 7) as 2nd argument.")
     exit(0)
 
-unnormalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
 normalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
-rounded_normalised_matrix = [[0 for x in range(20)] for y in range(20)] #[[true HIS, (true res index),(pred res index)][true ARG][true LYS][etc ...]]
 
-predicted_res = ""
-true_res = ""
 res_dict = {"HIS": 0, "ARG": 1, "LYS": 2, "GLN": 3, "GLU": 4, "ASP": 5, "ASN": 6, "GLY": 7, "ALA": 8, "SER": 9, "THR": 10, "PRO": 11, "CYS": 12, "VAL": 13, "ILE": 14, "MET": 15, "LEU": 16, "PHE": 17, "TYR": 18, "TRP": 19}
-support_dict = {"HIS": 0, "ARG": 0, "LYS": 0, "GLN": 0, "GLU": 0, "ASP": 0, "ASN": 0, "GLY": 0, "ALA": 0, "SER": 0, "THR": 0, "PRO": 0, "CYS": 0, "VAL": 0, "ILE": 0, "MET": 0, "LEU": 0, "PHE": 0, "TYR": 0, "TRP": 0}
 
-# read in raw data from csv
-with open(path) as file:
-    for line in file:
-        row = line.rstrip()
-        if not row.startswith("Predicted"):
-            predicted_res = row[:3]
-            predicted_index = res_dict.get(predicted_res)
-            true_res = row[4:7]
-            true_index = res_dict.get(true_res)
-            value = int(row[8:])
-            unnormalised_matrix[predicted_index][true_index] = value
-
-# build unnormalised matrix
-line = ""
-for row in range(20):
-    line = ""
-    line = list(res_dict)[row] + ": "
-    res_support = 0
-    for col in range (20):
-        line += str(unnormalised_matrix[row][col]) + ", "
-        res_support += unnormalised_matrix[row][col]
-    support_dict[list(res_dict)[row]] = res_support
-    line += "==(" + str(res_support) + ")"
-
-# build normalised matrix
-for row in range(20):
-    res_name = list(res_dict)[row]
-    line = res_name + ": "
-    total_check = 0
-    for col in range (20):
-        normalised_matrix[row][col] = unnormalised_matrix[row][col] / support_dict.get(res_name)
-        rounded_normalised_matrix[row][col] = round(unnormalised_matrix[row][col] / support_dict.get(res_name), 4)
-        line += str(round(normalised_matrix[row][col], 3)) + ", "
-        total_check += normalised_matrix[row][col]
-
-# codons_per_aa = {"HIS": ['CAU', 'CAC'], "ARG": ['CGU', 'CGC', 'CGA', 'CGG', 'AGA', 'AGG'], "LYS": ['AAA', 'AAG'], "GLN": ['CAA', 'CAG'], "GLU": ['GAA', 'GAG'], "ASP": ['GAU', 'GAC'], "ASN": ['AAU', 'AAC'], "GLY": ['GGU', 'GGC', 'GGA', 'GGG'], "ALA": ['GCU', 'GCC', 'GCA', 'GCG'], "SER": ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'], "THR": ['ACU', 'ACC', 'ACA', 'ACG'], "PRO": ['CCU', 'CCC', 'CCA', 'CCG'], "CYS": ['UGU', 'UGC'], "VAL": ['GUU', 'GUC', 'GUA', 'GUG'], "ILE": ['AUU', 'AUC', 'AUA'], "MET": ['AUG'], "LEU": ['CUU', 'CUC', 'CUA', 'CUG', 'UUA', 'UUG'], "PHE": ['UUU', 'UUC'], "TYR": ['UAU', 'UAC'], "TRP": ['UGG']}
+normalised_matrix = list(csv.reader(open("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_rounded_normalised_matrix.csv")))
 
 codons_per_aa = {"HIS": [['C'], ['A'], ['U', 'C']], "ARG": [[['C'], ['G'], ['U', 'C', 'A', 'G']],[['A'], ['G'], ['A', 'G']]], "LYS": [['A'], ['A'], ['A', 'G']], "GLN": [['C'], ['A'], ['A', 'G']], "GLU": [['G'], ['A'], ['A', 'G']], "ASP": [['G'], ['A'], ['U', 'C']], "ASN": [['A'], ['A'], ['U', 'C']], "GLY": [['G'], ['G'], ['U', 'C', 'A', 'G']], "ALA": [['G'], ['C'], ['U', 'C', 'A', 'G']], "SER": [[['U'], ['C'], ['U', 'C', 'A', 'G']], [['A'], ['G'], ['U', 'C']]], "THR": [['A'], ['C'], ['U', 'C', 'A', 'G']], "PRO": [['C'], ['C'], ['U', 'C', 'A', 'G']], "CYS": [['U'], ['G'], ['U', 'C']], "VAL": [['G'], ['U'], ['U', 'C', 'A', 'G']], "ILE": [['A'], ['U'], ['U', 'C', 'A']], "MET": [['A'], ['U'], ['G']], "LEU": [[['C'], ['U'], ['U', 'C', 'A', 'G']], [['U'], ['U'], ['A', 'G']]], "PHE": [['U'], ['U'], ['U', 'C']], "TYR": [['U'], ['A'], ['U', 'C']], "TRP": [['U'], ['G'], ['G']]}
 
