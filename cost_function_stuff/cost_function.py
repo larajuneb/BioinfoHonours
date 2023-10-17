@@ -1,8 +1,10 @@
+from cmath import sqrt
 from operator import index
 import random
 import csv
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 #generate normalised substitution matrix list from .csv
 normalised_substitution_matrix = list(csv.reader(open("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_normalised_matrix.csv")))
@@ -103,8 +105,6 @@ def calculate_N():
                         sum_for_N += FreelandHurst_mutation_weights.get("3")
         all_N.append(sum_for_N)
         all_N_codons.append(true_codon)
-    # for entry in range(len(all_N)):
-        # print(all_N_codons[entry] + ": " + str(round(all_N[entry], 3)))
 
 #calculate probability of codon mutation using Freeland and Hurst mutation weights
 def get_codon_mutation_prob(true_codon, mutant_codon):
@@ -195,7 +195,7 @@ def regenerate_codon_matrix(array):
     return(array)
 
 #generate 10,000 random assignments of codons and calculate costs for each
-def generate_sample_set(sample_size):
+def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM):
     random_codon_assignments = {} #similar to codons_per_aa dict, but instead of true codon assignments, the codons are assigned randomly to amino acids
     leftover = []
     stop = []
@@ -239,6 +239,13 @@ def generate_sample_set(sample_size):
             norm_cost_matrix = normalise_matrix(minimum, maximum, temp_cost_matrix)
             norm_code_costs.append(get_code_cost(norm_cost_matrix))
 
+            if j == 0:
+                SeqPredNN_sample_code_costs.append(get_code_cost(temp_cost_matrix))
+                SeqPredNN_sample_code_costs_NORM.append(get_code_cost(norm_cost_matrix))
+            if j == 1:
+                Koonin_sample_code_costs.append(get_code_cost(temp_cost_matrix))
+                Koonin_sample_code_costs_NORM.append(get_code_cost(norm_cost_matrix))
+
             random_codon_assignments.clear() #clear random codon assignment for next sample
             no_stop_codons.clear()
             stop.clear()
@@ -252,12 +259,21 @@ def generate_sample_set(sample_size):
         print("----------------------- series -----------------------")
         series = pd.Series(code_costs)
         print(series.describe())
+        series.value_counts().plot.bar()
         print("----------------------- norm series -----------------------")
         series_norm = pd.Series(norm_code_costs)
         print(series_norm.describe())
+        series_norm.value_counts().plot.bar()
 
         code_costs.clear()
         norm_code_costs.clear()
+    
+    plot_samples(sample_size)
+
+#plot bar graphs for samples produced
+def plot_samples(sample_size):
+    bins = sqrt(sample_size)
+    return 0
 
 #make csv files of all matrices
 def make_csvs():
@@ -343,18 +359,6 @@ Koonin_cost_max = max(Koonin_check)
 SeqPredNN_codon_matrix_NORM = normalise_matrix(SeqPredNN_cost_min, SeqPredNN_cost_max, SeqPredNN_codon_matrix)
 Koonin_codon_matrix_NORM = normalise_matrix(Koonin_cost_min, Koonin_cost_max, Koonin_codon_matrix)
 
-#create normalised codon mutation cost matrices
-# for row in range(61):
-#     for cell in range(61):
-#         if not isinstance(SeqPredNN_codon_matrix[row][cell], str):
-#             SeqPredNN_codon_matrix_NORM[row][cell] = normalise_cost(SeqPredNN_cost_min, SeqPredNN_cost_max, SeqPredNN_codon_matrix[row][cell])
-#         if isinstance(SeqPredNN_codon_matrix[row][cell], str):
-#             SeqPredNN_codon_matrix_NORM[row][cell] = SeqPredNN_codon_matrix[row][cell]
-#         if not isinstance(Koonin_codon_matrix[row][cell], str):
-#             Koonin_codon_matrix_NORM[row][cell] = normalise_cost(Koonin_cost_min, Koonin_cost_max, Koonin_codon_matrix[row][cell])
-#         if isinstance(Koonin_codon_matrix[row][cell], str):
-#             Koonin_codon_matrix_NORM[row][cell] = Koonin_codon_matrix[row][cell]
-
 #get overall code cost for SeqPredNN and Koonin matrices
 SeqPredNN_code_cost = get_code_cost(SeqPredNN_codon_matrix)
 Koonin_code_cost = get_code_cost(Koonin_codon_matrix)
@@ -366,7 +370,11 @@ print("NORM SeqPredNN code cost: " + str(get_code_cost(SeqPredNN_codon_matrix_NO
 print("NORM Koonin code cost: " + str(get_code_cost(Koonin_codon_matrix_NORM)))
 
 #generate 10,000 random codon assignments for SeqPredNN model and calculate code costs for each assignment
-generate_sample_set(100)
+SeqPredNN_sample_code_costs = []
+SeqPredNN_sample_code_costs_NORM = []
+Koonin_sample_code_costs = []
+Koonin_sample_code_costs_NORM = []
+generate_sample_set(100, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
 
 #generate .csv files
 make_csvs()
