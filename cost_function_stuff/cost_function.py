@@ -5,6 +5,10 @@ import csv
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import math
+from scipy.stats import kstest
+from scipy.stats import normaltest
+from scipy.stats import shapiro 
 
 #generate normalised substitution matrix list from .csv
 normalised_substitution_matrix = list(csv.reader(open("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_normalised_matrix.csv")))
@@ -194,6 +198,10 @@ def regenerate_codon_matrix(array):
                 array.append(codon)
     return(array)
 
+#check if a list of costs in normally distributed using the Kolmogorov-Smirnov Test
+def is_it_gaussian(dataset):
+    kstest(dataset, 'norm')
+    return 0
 #generate 10,000 random assignments of codons and calculate costs for each
 def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM):
     random_codon_assignments = {} #similar to codons_per_aa dict, but instead of true codon assignments, the codons are assigned randomly to amino acids
@@ -231,12 +239,14 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
 
                     if not isinstance(temp_cost_matrix[row][cell], str):
                         matrix_min_max_check.append(temp_cost_matrix[row][cell])
-
+            #get cosde cost for raw data matrix
             minimum = min(matrix_min_max_check)
             maximum = max(matrix_min_max_check)
             code_costs.append(get_code_cost(temp_cost_matrix))
 
+            #get code cost for normalised data matrix
             norm_cost_matrix = normalise_matrix(minimum, maximum, temp_cost_matrix)
+
             norm_code_costs.append(get_code_cost(norm_cost_matrix))
 
             if j == 0:
@@ -259,20 +269,93 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
         print("----------------------- series -----------------------")
         series = pd.Series(code_costs)
         print(series.describe())
-        series.value_counts().plot.bar()
         print("----------------------- norm series -----------------------")
         series_norm = pd.Series(norm_code_costs)
         print(series_norm.describe())
-        series_norm.value_counts().plot.bar()
+        
+        # if j == 0:
+        #     plot_samples(sample_size, code_costs, "SeqPredNN", False)
+        #     plot_samples(sample_size, norm_code_costs, "SeqPredNN", True)
+        # if j == 1:
+        #     plot_samples(sample_size, code_costs, "Koonin", False)
+        #     plot_samples(sample_size, norm_code_costs, "Koonin", True)
 
         code_costs.clear()
         norm_code_costs.clear()
     
-    plot_samples(sample_size)
+    print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+    print("SeqPredNN_sample_code_costs: " + str(shapiro(SeqPredNN_sample_code_costs)))
+    if shapiro(SeqPredNN_sample_code_costs).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("SeqPredNN_sample_code_costs_NORM: " + str(shapiro(SeqPredNN_sample_code_costs_NORM)))
+    if shapiro(SeqPredNN_sample_code_costs_NORM).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("Koonin_sample_code_costs: " + str(shapiro(Koonin_sample_code_costs)))
+    if shapiro(Koonin_sample_code_costs).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("Koonin_sample_code_costs_NORM: " + str(shapiro(Koonin_sample_code_costs_NORM)))
+    if shapiro(Koonin_sample_code_costs_NORM).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+    print("SeqPredNN_sample_code_costs: " + str(normaltest(SeqPredNN_sample_code_costs)))
+    if normaltest(SeqPredNN_sample_code_costs).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("SeqPredNN_sample_code_costs_NORM: " + str(normaltest(SeqPredNN_sample_code_costs_NORM)))
+    if normaltest(SeqPredNN_sample_code_costs_NORM).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("Koonin_sample_code_costs: " + str(normaltest(Koonin_sample_code_costs)))
+    if normaltest(Koonin_sample_code_costs).pvalue > 0.05:
+        print("Normal = TRUE")
+    print("Koonin_sample_code_costs_NORM: " + str(normaltest(Koonin_sample_code_costs_NORM)))
+    if normaltest(Koonin_sample_code_costs_NORM).pvalue > 0.05:
+        print("Normal = TRUE")
+    
+    
 
 #plot bar graphs for samples produced
-def plot_samples(sample_size):
-    bins = sqrt(sample_size)
+def plot_samples(sample_size, costs, model, normalised):
+    costs_temp = []
+    for item in costs:
+        costs_temp.append(item)
+    num_bins = math.isqrt(sample_size)
+    mini = float(min(costs))
+    maxi = float(max(costs))
+    step = (maxi - mini) / num_bins
+    bins = {}
+    bin_counts = {}
+    val = mini
+    x = []
+    x_bins = []
+    y = []
+    for i in range(num_bins):
+        if i == (num_bins - 1):
+            bins[i] = [val, maxi]
+        else:
+            bins[i] = [val, val + step]
+        bin_counts[i] = 0
+        val += step
+
+    count = 0
+    for key, value in bins.items():
+        for item in costs_temp:
+            if item >= value[0] and item <= value[1]:
+                bin_counts[key] += 1
+        x_bins.append("[" + str(round(bins[key][0], 3)) + " - " + str(round(bins[key][1], 3)) + "]")
+        x.append(count)
+        y.append(bin_counts[key])
+        count += 1
+
+    plt.figure(figsize=(10, 8))
+    plt.bar(x_bins, y)
+    plt.xticks(rotation = 20)
+    if normalised == False:
+        plt.title("Number of occurrences of randomly simulated code costs per bracket for models generated\n using the " + model + " method")
+    if normalised == True:
+        plt.title("Number of occurrences of randomly simulated code costs per bracket for NORMALISED models\n generated using the " + model + " method")
+    plt.xlabel("Code cost")
+    plt.ylabel("Number of occurrences")
+    plt.show()
+
     return 0
 
 #make csv files of all matrices
@@ -374,7 +457,7 @@ SeqPredNN_sample_code_costs = []
 SeqPredNN_sample_code_costs_NORM = []
 Koonin_sample_code_costs = []
 Koonin_sample_code_costs_NORM = []
-generate_sample_set(100, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
+generate_sample_set(800, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
 
 #generate .csv files
 make_csvs()
