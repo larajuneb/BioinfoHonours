@@ -436,12 +436,18 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename):
 
     fig, ax = plt.subplots(figsize=(42, 35))
     plt.rcParams['font.size'] = 11
-    img = ax.imshow(plot_matrix)
+
+    cmap = matplotlib.colormaps.get_cmap('viridis')
+    cmap.set_under(color='grey')
+    img = ax.imshow(plot_matrix, cmap=cmap, vmin=minimum, vmax=maximum)
+
     ax.set_xticks(np.arange(61))
     ax.set_yticks(np.arange(61))
     ax.set_xticklabels(codons_excl_stop, rotation = 90)
     ax.set_yticklabels(codons_excl_stop)
     ax.tick_params(labelsize=30, pad=14, length=14, width=3)
+    ax.tick_params(bottom=False, top=True, left=True, right=False)
+    ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False)
     ax.set_xlabel('Mutant codon', fontsize=70, labelpad=24)
     ax.set_ylabel('True codon', fontsize=70, labelpad=24)
 
@@ -456,6 +462,9 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename):
 
     cbar = fig.colorbar(img, ax=ax, pad=0.01)
     cbar.ax.tick_params(labelsize=63, pad=14, length=14, width=3)
+
+    
+
     fig.tight_layout()
     plt.savefig(f'{filename}.png')
     plt.close()
