@@ -6,9 +6,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import matplotlib
+import matplotlib.cm as cm
+import numpy
 from scipy.stats import kstest
 from scipy.stats import normaltest
 from scipy.stats import shapiro 
+import sklearn.metrics as metrics
 
 #generate normalised substitution matrix list from .csv
 normalised_substitution_matrix = list(csv.reader(open("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_normalised_matrix.csv")))
@@ -19,6 +23,9 @@ for row in range(len(normalised_substitution_matrix)):
 #SeqPredNN codon matrix
 SeqPredNN_codon_matrix = [[0 for x in range(61)] for y in range(61)]
 Koonin_codon_matrix = [[0 for x in range(61)] for y in range(61)]
+
+SeqPredNN_codon_matrix_PLOTS = [[0 for x in range(61)] for y in range(61)]
+Koonin_codon_matrix_PLOTS = [[0 for x in range(61)] for y in range(61)]
 # Higgs_codon_matrix = [[0 for x in range(61)] for y in range(61)]
 
 SeqPredNN_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
@@ -150,7 +157,7 @@ def get_aa_for_codon(codon, codon_dict):
             return key
 
 #calculate the cost of a codon mutation
-def get_cost(true_codon_index, mutant_codon_index, mode, codon_dict, codons_without_stop):
+def get_cost(true_codon_index, mutant_codon_index, mode, codon_dict, codons_without_stop, plot):
     #get codon string name from it's index
     true_codon = codons_without_stop[true_codon_index]
     mutant_codon = codons_without_stop[mutant_codon_index]
@@ -174,6 +181,8 @@ def get_cost(true_codon_index, mutant_codon_index, mode, codon_dict, codons_with
         cost = '-'
     else:
         cost = float(codon_mutation_prob) * float(aa_difference)
+    if plot == True and isinstance(cost, str):
+        cost = -10
     return (cost)
 
 #normalise the cost value to be between 0 and 100
@@ -233,9 +242,9 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
             for row in range(61):
                 for cell in range(61):
                     if j == 0:
-                        temp_cost_matrix[row][cell] = get_cost(row, cell, "SeqPredNN", random_codon_assignments, no_stop_codons)
+                        temp_cost_matrix[row][cell] = get_cost(row, cell, "SeqPredNN", random_codon_assignments, no_stop_codons, False)
                     elif j == 1:
-                        temp_cost_matrix[row][cell] = get_cost(row, cell, "Koonin", random_codon_assignments, no_stop_codons)
+                        temp_cost_matrix[row][cell] = get_cost(row, cell, "Koonin", random_codon_assignments, no_stop_codons, False)
 
                     if not isinstance(temp_cost_matrix[row][cell], str):
                         matrix_min_max_check.append(temp_cost_matrix[row][cell])
@@ -273,12 +282,12 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
         series_norm = pd.Series(norm_code_costs)
         print(series_norm.describe())
         
-        # if j == 0:
-        #     plot_samples(sample_size, code_costs, "SeqPredNN", False)
-        #     plot_samples(sample_size, norm_code_costs, "SeqPredNN", True)
-        # if j == 1:
-        #     plot_samples(sample_size, code_costs, "Koonin", False)
-        #     plot_samples(sample_size, norm_code_costs, "Koonin", True)
+        if j == 0:
+            plot_samples(sample_size, code_costs, "SeqPredNN", False)
+            plot_samples(sample_size, norm_code_costs, "SeqPredNN", True)
+        if j == 1:
+            plot_samples(sample_size, code_costs, "Koonin", False)
+            plot_samples(sample_size, norm_code_costs, "Koonin", True)
 
         code_costs.clear()
         norm_code_costs.clear()
@@ -310,8 +319,6 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
     if normaltest(Koonin_sample_code_costs_NORM).pvalue > 0.05:
         print("Normal = TRUE")
     
-    
-
 #plot bar graphs for samples produced
 def plot_samples(sample_size, costs, model, normalised):
     costs_temp = []
@@ -400,14 +407,17 @@ def make_csvs():
 def calculate_SeqPredNN_and_Koonin_matrices():
     for row in range(61):
         for cell in range(61):
-            SeqPredNN_codon_matrix[row][cell] = get_cost(row, cell, "SeqPredNN", codons_per_aa, codons_excl_stop)
-            Koonin_codon_matrix[row][cell] = get_cost(row, cell, "Koonin", codons_per_aa, codons_excl_stop)
+            SeqPredNN_codon_matrix[row][cell] = get_cost(row, cell, "SeqPredNN", codons_per_aa, codons_excl_stop, False)
+            Koonin_codon_matrix[row][cell] = get_cost(row, cell, "Koonin", codons_per_aa, codons_excl_stop, False)
 
             if not isinstance(SeqPredNN_codon_matrix[row][cell], str):
                 SeqPredNN_check.append(SeqPredNN_codon_matrix[row][cell])
 
             if not isinstance(Koonin_codon_matrix[row][cell], str):
                 Koonin_check.append(Koonin_codon_matrix[row][cell])
+
+            SeqPredNN_codon_matrix_PLOTS[row][cell] = get_cost(row, cell, "SeqPredNN", codons_per_aa, codons_excl_stop, True)
+            Koonin_codon_matrix_PLOTS[row][cell] = get_cost(row, cell, "Koonin", codons_per_aa, codons_excl_stop, True)
 
 def normalise_matrix(minimum, maximum, original_matrix):
     normalised = [[0 for x in range(61)] for y in range(61)]
@@ -420,6 +430,38 @@ def normalise_matrix(minimum, maximum, original_matrix):
                 normalised[row][cell] = original_matrix[row][cell]
 
     return(normalised)
+
+# def confusion_matrix(self, true_residues, predicted_residues, normalize, file_name):
+def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename):
+
+    fig, ax = plt.subplots(figsize=(42, 35))
+    plt.rcParams['font.size'] = 11
+    img = ax.imshow(plot_matrix)
+    ax.set_xticks(np.arange(61))
+    ax.set_yticks(np.arange(61))
+    ax.set_xticklabels(codons_excl_stop, rotation = 90)
+    ax.set_yticklabels(codons_excl_stop)
+    ax.tick_params(labelsize=30, pad=14, length=14, width=3)
+    ax.set_xlabel('Mutant codon', fontsize=70, labelpad=24)
+    ax.set_ylabel('True codon', fontsize=70, labelpad=24)
+
+    # psm = ax.pcolormesh(plot_matrix, cmap='viridis', vmin=minimum, vmax=maximum)
+    # fig.colorbar(psm, ax=ax)
+    for i in range(61):
+        for j in range(61):
+            if not isinstance(original_matrix[i][j], str):
+                ax.text(j, i, round(original_matrix[i][j], 3), ha="center", va="center", color="black")
+            else:
+                ax.text(j, i, original_matrix[i][j], ha="center", va="center", color="black")
+
+    cbar = fig.colorbar(img, ax=ax, pad=0.01)
+    cbar.ax.tick_params(labelsize=63, pad=14, length=14, width=3)
+    fig.tight_layout()
+    plt.savefig(f'{filename}.png')
+    plt.close()
+
+    
+    # plt.close()
 
 SeqPredNN_cost_min = 0
 SeqPredNN_cost_max = 0
@@ -447,7 +489,11 @@ SeqPredNN_code_cost = get_code_cost(SeqPredNN_codon_matrix)
 Koonin_code_cost = get_code_cost(Koonin_codon_matrix)
 
 print("SeqPredNN code cost: " + str(SeqPredNN_code_cost))
+print("SeqPredNN min: " + str(min(SeqPredNN_check)))
+print("SeqPredNN max: " + str(max(SeqPredNN_check)))
 print("Koonin code cost: " + str(Koonin_code_cost))
+print("Koonin min: " + str(min(Koonin_check)))
+print("Koonin max: " + str(max(Koonin_check)))
 
 print("NORM SeqPredNN code cost: " + str(get_code_cost(SeqPredNN_codon_matrix_NORM)))
 print("NORM Koonin code cost: " + str(get_code_cost(Koonin_codon_matrix_NORM)))
@@ -457,7 +503,33 @@ SeqPredNN_sample_code_costs = []
 SeqPredNN_sample_code_costs_NORM = []
 Koonin_sample_code_costs = []
 Koonin_sample_code_costs_NORM = []
-generate_sample_set(800, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
+# generate_sample_set(800, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
 
 #generate .csv files
 make_csvs()
+
+#generate plots
+confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix")
+confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix")
+
+symmetrical_S = []
+symmetrical_K = []
+for i in range(61):
+    for j in range(61):
+        if SeqPredNN_codon_matrix[i][j] == SeqPredNN_codon_matrix[j][i]:
+            symmetrical_S.append(True)
+        elif SeqPredNN_codon_matrix[i][j] != SeqPredNN_codon_matrix[j][i]:
+            symmetrical_S.append(False)
+            print("SEQPREDNN NOT SYMMETRICAL: i=" + str(i) + " j=" + str(j))
+            
+        if Koonin_codon_matrix[i][j] == Koonin_codon_matrix[j][i]:
+            symmetrical_K.append(True)
+        elif Koonin_codon_matrix[i][j] != Koonin_codon_matrix[j][i]:
+            symmetrical_K.append(False)
+            print("KOONIN NOT SYMMETRICAL: i=" + str(i) + " j=" + str(j))
+
+if False in symmetrical_S:
+    print("SEQPREDNN NOT SYMMETRICAL")
+
+if False in symmetrical_K:
+    print("KOONIN NOT SYMMETRICAL")
