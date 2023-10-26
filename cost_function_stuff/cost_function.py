@@ -18,25 +18,36 @@ import sklearn.metrics as metrics
 #generate normalised substitution matrix list from .csv
 normalised_substitution_matrix = list(csv.reader(open("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_normalised_matrix.csv")))
 normalised_substitution_matrix.remove(normalised_substitution_matrix[0])
+
+
+Higgs_distance_matrix = list(csv.reader(open("Higgs_aa_distance_matrix.csv")))
+Higgs_distance_matrix.remove(Higgs_distance_matrix[0])
+
 for row in range(len(normalised_substitution_matrix)):
     normalised_substitution_matrix[row].remove(normalised_substitution_matrix[row][0])
+
+for row in range(len(Higgs_distance_matrix)):
+    Higgs_distance_matrix[row].remove(Higgs_distance_matrix[row][0])
 
 #SeqPredNN codon matrix
 SeqPredNN_codon_matrix = [[0 for x in range(61)] for y in range(61)]
 Koonin_codon_matrix = [[0 for x in range(61)] for y in range(61)]
+Higgs_codon_matrix = [[0 for x in range(61)] for y in range(61)]
 
 neutral_substitution_matrix = [[0 for x in range(61)] for y in range(61)]
 neutral_substitution_matrix_PLOTS = [[0 for x in range(61)] for y in range(61)]
 
 SeqPredNN_codon_matrix_PLOTS = [[0 for x in range(61)] for y in range(61)]
 Koonin_codon_matrix_PLOTS = [[0 for x in range(61)] for y in range(61)]
+Higgs_codon_matrix_PLOTS = [[0 for x in range(61)] for y in range(61)]
 
 SeqPredNN_codon_matrix_NORM_PLOTS = [[0 for x in range(61)] for y in range(61)]
 Koonin_codon_matrix_NORM_PLOTS = [[0 for x in range(61)] for y in range(61)]
-# Higgs_codon_matrix = [[0 for x in range(61)] for y in range(61)]
+Higgs_codon_matrix_NORM_PLOTS = [[0 for x in range(61)] for y in range(61)]
 
 SeqPredNN_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 Koonin_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+Higgs_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 
 nucleotides = ['U', 'C', 'A', 'G']
 codons = []
@@ -59,6 +70,8 @@ number_of_codons_per_aa = {"HIS": 2, "ARG": 6, "LYS": 2, "GLN": 2, "GLU": 2, "AS
 
 amino_acids = ["HIS", "ARG", "LYS", "GLN", "GLU", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "CYS", "VAL", "ILE", "MET", "LEU", "PHE", "TYR", "TRP"]
 
+Higgs_amino_acid_order = ['PHE','LEU','ILE','MET','VAL','SER','PRO','THR','ALA','TYR','HIS','GLN','ASN','LYS','ASP','GLU','CYS','TRP','ARG','GLY']
+
 codons_per_aa = {"HIS": ['CAU', 'CAC'], "ARG": ['CGU', 'CGC', 'CGA', 'CGG', 'AGA', 'AGG'], "LYS": ['AAA', 'AAG'], "GLN": ['CAA', 'CAG'], "GLU": ['GAA', 'GAG'], "ASP": ['GAU', 'GAC'], "ASN": ['AAU', 'AAC'], "GLY": ['GGU', 'GGC', 'GGA', 'GGG'], "ALA": ['GCU', 'GCC', 'GCA', 'GCG'], "SER": ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'], "THR": ['ACU', 'ACC', 'ACA', 'ACG'], "PRO": ['CCU', 'CCC', 'CCA', 'CCG'], "CYS": ['UGU', 'UGC'], "VAL": ['GUU', 'GUC', 'GUA', 'GUG'], "ILE": ['AUU', 'AUC', 'AUA'], "MET": ['AUG'], "LEU": ['CUU', 'CUC', 'CUA', 'CUG', 'UUA', 'UUG'], "PHE": ['UUU', 'UUC'], "TYR": ['UAU', 'UAC'], "TRP": ['UGG'], "stop": ['UAA', 'UAG', 'UGA']}
 
 
@@ -72,6 +85,7 @@ FreelandHurst_mutation_weights["2tv"] = 0.1/N
 FreelandHurst_mutation_weights["otherwise"] = 0 #more than 1 position that differs
 
 polar_requirement_scale = {"HIS": 8.4, "ARG": 9.1, "LYS": 10.1, "GLN": 8.6, "GLU": 12.5, "ASP": 13, "ASN": 10, "GLY": 7.9, "ALA": 7, "SER": 7.5, "THR": 6.6, "PRO": 6.6, "CYS": 11.5, "VAL": 5.6, "ILE": 4.9, "MET": 5.3, "LEU": 4.9, "PHE": 5, "TYR": 5.7, "TRP": 5.3}
+
 
 all_N = []
 all_N_codons = []
@@ -172,14 +186,20 @@ def get_cost(true_codon_index, mutant_codon_index, mode, codon_dict, codons_with
     true_aa = get_aa_for_codon(true_codon, codon_dict)
     mutant_aa = get_aa_for_codon(mutant_codon, codon_dict)
     #get amino acid name from amino acid index
-    true_aa_index = amino_acids.index(true_aa)
-    mutant_aa_index = amino_acids.index(mutant_aa)
+    if mode != "Higgs":
+        true_aa_index = amino_acids.index(true_aa)
+        mutant_aa_index = amino_acids.index(mutant_aa)
+    elif mode == "Higgs":
+        true_aa_index = Higgs_amino_acid_order.index(true_aa)
+        mutant_aa_index = Higgs_amino_acid_order.index(mutant_aa)
 
     aa_difference = 0
     if mode == "SeqPredNN":
         aa_difference = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
     elif mode == "Koonin":
         aa_difference = pow((polar_requirement_scale.get(true_aa) - polar_requirement_scale.get(mutant_aa)), 2)
+    elif mode == "Higgs":
+        aa_difference = Higgs_distance_matrix[true_aa_index][mutant_aa_index]
     elif mode == "neutral":
         aa_difference = 1
 
@@ -257,7 +277,7 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
 
                     if not isinstance(temp_cost_matrix[row][cell], str):
                         matrix_min_max_check.append(temp_cost_matrix[row][cell])
-            #get cosde cost for raw data matrix
+            #get code cost for raw data matrix
             minimum = min(matrix_min_max_check)
             maximum = max(matrix_min_max_check)
             code_costs.append(get_code_cost(temp_cost_matrix))
@@ -291,12 +311,12 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
         series_norm = pd.Series(norm_code_costs)
         print(series_norm.describe())
         
-        # if j == 0:
-        #     plot_samples(sample_size, code_costs, "SeqPredNN", False)
-        #     plot_samples(sample_size, norm_code_costs, "SeqPredNN", True)
-        # if j == 1:
-        #     plot_samples(sample_size, code_costs, "Koonin", False)
-        #     plot_samples(sample_size, norm_code_costs, "Koonin", True)
+        if j == 0:
+            plot_samples(sample_size, code_costs, "SeqPredNN", False)
+            plot_samples(sample_size, norm_code_costs, "SeqPredNN", True)
+        if j == 1:
+            plot_samples(sample_size, code_costs, "Koonin", False)
+            plot_samples(sample_size, norm_code_costs, "Koonin", True)
 
         code_costs.clear()
         norm_code_costs.clear()
@@ -371,6 +391,15 @@ def plot_samples(sample_size, costs, model, normalised):
     plt.xlabel("Code cost")
     plt.ylabel("Number of occurrences")
     plt.show()
+#############################################
+    
+ 
+    # create histogram
+    plt.hist(costs, bins=num_bins)
+    
+    # display histogram
+    plt.show()
+    ###############################################
 
     return 0
 
@@ -420,14 +449,33 @@ def make_csvs():
         for codon_list in neutral_substitution_matrix:
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
+    
+    filename = "Higgs_cost_matrix.csv"
+    codon_string = " ," + ",".join(codons_excl_stop) + "\n"
+    with open(filename, mode="w") as file:
+        file.write(codon_string) #first line
+        counter = 0
+        for codon_list in Higgs_codon_matrix:
+            file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
+            counter += 1
+
+    filename = "Higgs_cost_matrix_NORM.csv"
+    codon_string = " ," + ",".join(codons_excl_stop) + "\n"
+    with open(filename, mode="w") as file:
+        file.write(codon_string) #first line
+        counter = 0
+        for codon_list in Higgs_codon_matrix_NORM:
+            file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
+            counter += 1
 
 #start cost calculations
-def calculate_SeqPredNN_and_Koonin_matrices():
+def calculate_SeqPredNN_Koonin_and_Higgs_matrices():
     for row in range(61):
         for cell in range(61):
             SeqPredNN_codon_matrix[row][cell] = get_cost(row, cell, "SeqPredNN", codons_per_aa, codons_excl_stop, False)
             Koonin_codon_matrix[row][cell] = get_cost(row, cell, "Koonin", codons_per_aa, codons_excl_stop, False)
             neutral_substitution_matrix[row][cell] = get_cost(row, cell, "neutral", codons_per_aa, codons_excl_stop, False)
+            Higgs_codon_matrix[row][cell] = get_cost(row, cell, "Higgs", codons_per_aa, codons_excl_stop, False)
 
             if not isinstance(SeqPredNN_codon_matrix[row][cell], str):
                 SeqPredNN_check.append(SeqPredNN_codon_matrix[row][cell])
@@ -438,9 +486,13 @@ def calculate_SeqPredNN_and_Koonin_matrices():
             if not isinstance(neutral_substitution_matrix[row][cell], str):
                 neutral_check.append(neutral_substitution_matrix[row][cell])
 
+            if not isinstance(Higgs_codon_matrix[row][cell], str):
+                Higgs_check.append(Higgs_codon_matrix[row][cell])
+
             SeqPredNN_codon_matrix_PLOTS[row][cell] = get_cost(row, cell, "SeqPredNN", codons_per_aa, codons_excl_stop, True)
             Koonin_codon_matrix_PLOTS[row][cell] = get_cost(row, cell, "Koonin", codons_per_aa, codons_excl_stop, True)
             neutral_substitution_matrix_PLOTS[row][cell] = get_cost(row, cell, "neutral", codons_per_aa, codons_excl_stop, True)
+            Higgs_codon_matrix_PLOTS[row][cell] = get_cost(row, cell, "Higgs", codons_per_aa, codons_excl_stop, True)
 
 def normalise_matrix(minimum, maximum, original_matrix, plot_matrix, norm_check):
     normalised = [[0 for x in range(61)] for y in range(61)]
@@ -500,76 +552,143 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename, t
 
     cbar = fig.colorbar(img, ax=ax, pad=0.01)
     cbar.ax.tick_params(labelsize=63, pad=14, length=14, width=3)
-
-    
-
     fig.tight_layout()
     plt.savefig(f'{filename}.png')
     plt.close()
 
+def spearmans_rank_correlation_tests():
+    print()
+    print("******************** SPEARMAN'S RANK CORRELATION ON CODE MUTATION COST FOR EACH METHOD ********************")
+    print("-------------------- SeqPredNN vs Koonin: --------------------")
+    print("Alternative hypothesis: corr != 0; Null hypothesis: corr == 0")
+    print(spearmanr(SeqPredNN_check, Koonin_check, alternative='two-sided'))
+    if spearmanr(SeqPredNN_check, Koonin_check, alternative='two-sided').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr != 0")
+    if spearmanr(SeqPredNN_check, Koonin_check, alternative='two-sided').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr == 0")
+    print()
+    print("Alternative hypothesis = corr < 0; Null hypothesis: corr >= 0")
+    print(spearmanr(SeqPredNN_check, Koonin_check, alternative='less'))
+    if spearmanr(SeqPredNN_check, Koonin_check, alternative='less').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr < 0")
+    if spearmanr(SeqPredNN_check, Koonin_check, alternative='less').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr >= 0")
+    print()
+    print("Alternative hypothesis = corr > 0; Null hypothesis: corr <= 0")
+    print(spearmanr(SeqPredNN_check, Koonin_check, alternative='greater'))
+    if spearmanr(SeqPredNN_check, Koonin_check, alternative='greater').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr > 0")
+    if spearmanr(SeqPredNN_check, Koonin_check, alternative='greater').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr <= 0")
+    print()
 
-SeqPredNN_cost_min = 0
-SeqPredNN_cost_max = 0
-Koonin_cost_min = 0
-Koonin_cost_max = 0
+    print("-------------------- SeqPredNN vs Higgs: --------------------")
+    print("Alternative hypothesis: corr != 0; Null hypothesis: corr == 0")
+    print(spearmanr(SeqPredNN_check, Higgs_check, alternative='two-sided'))
+    if spearmanr(SeqPredNN_check, Higgs_check, alternative='two-sided').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr != 0")
+    if spearmanr(SeqPredNN_check, Higgs_check, alternative='two-sided').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr == 0")
+    print()
+    print("Alternative hypothesis = corr < 0; Null hypothesis: corr >= 0")
+    print(spearmanr(SeqPredNN_check, Higgs_check, alternative='less'))
+    if spearmanr(SeqPredNN_check, Higgs_check, alternative='less').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr < 0")
+    if spearmanr(SeqPredNN_check, Higgs_check, alternative='less').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr >= 0")
+    print()
+    print("Alternative hypothesis = corr > 0; Null hypothesis: corr <= 0")
+    print(spearmanr(SeqPredNN_check, Higgs_check, alternative='greater'))
+    if spearmanr(SeqPredNN_check, Higgs_check, alternative='greater').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr > 0")
+    if spearmanr(SeqPredNN_check, Higgs_check, alternative='greater').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr <= 0")
+    print()
+
+    print("-------------------- Koonin vs Higgs: --------------------")
+    print("Alternative hypothesis: corr != 0; Null hypothesis: corr == 0")
+    print(spearmanr(Koonin_check, Higgs_check, alternative='two-sided'))
+    if spearmanr(Koonin_check, Higgs_check, alternative='two-sided').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr != 0")
+    if spearmanr(Koonin_check, Higgs_check, alternative='two-sided').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr == 0")
+    print()
+    print("Alternative hypothesis = corr < 0; Null hypothesis: corr >= 0")
+    print(spearmanr(Koonin_check, Higgs_check, alternative='less'))
+    if spearmanr(Koonin_check, Higgs_check, alternative='less').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr < 0")
+    if spearmanr(Koonin_check, Higgs_check, alternative='less').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr >= 0")
+    print()
+    print("Alternative hypothesis = corr > 0; Null hypothesis: corr <= 0")
+    print(spearmanr(Koonin_check, Higgs_check, alternative='greater'))
+    if spearmanr(Koonin_check, Higgs_check, alternative='greater').pvalue < 0.05:
+        print("Reject null hypothesis, thus corr > 0")
+    if spearmanr(Koonin_check, Higgs_check, alternative='greater').pvalue > 0.05:
+        print("Fail to reject null hypothesis, thus corr <= 0")
+    print()
 
 SeqPredNN_check = []
 SeqPredNN_check_NORM = []
 Koonin_check = []
 Koonin_check_NORM = []
 neutral_check = []
+Higgs_check = []
+Higgs_check_NORM = []
 
 #run calculations for SeqPredNN and Koonin matrices
-calculate_SeqPredNN_and_Koonin_matrices()
-
-#calculate min and max for both matrices
-SeqPredNN_cost_min = min(SeqPredNN_check)
-SeqPredNN_cost_max = max(SeqPredNN_check)
-Koonin_cost_min = min(Koonin_check)
-Koonin_cost_max = max(Koonin_check)
-neutral_cost_min = min(neutral_check)
-neutral_cost_max = max(neutral_check)
+calculate_SeqPredNN_Koonin_and_Higgs_matrices()
 
 #create normalised codon mutation cost matrices
-SeqPredNN_codon_matrix_NORM = normalise_matrix(SeqPredNN_cost_min, SeqPredNN_cost_max, SeqPredNN_codon_matrix, SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_check_NORM)
-Koonin_codon_matrix_NORM = normalise_matrix(Koonin_cost_min, Koonin_cost_max, Koonin_codon_matrix, Koonin_codon_matrix_NORM_PLOTS, Koonin_check_NORM)
+SeqPredNN_codon_matrix_NORM = normalise_matrix(min(SeqPredNN_check), max(SeqPredNN_check), SeqPredNN_codon_matrix, SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_check_NORM)
+Koonin_codon_matrix_NORM = normalise_matrix(min(Koonin_check), max(Koonin_check), Koonin_codon_matrix, Koonin_codon_matrix_NORM_PLOTS, Koonin_check_NORM)
+Higgs_codon_matrix_NORM = normalise_matrix(min(Higgs_check), max(Higgs_check), Higgs_codon_matrix, Higgs_codon_matrix_NORM_PLOTS, Higgs_check_NORM)
 
 #get overall code cost for SeqPredNN and Koonin matrices
 SeqPredNN_code_cost = get_code_cost(SeqPredNN_codon_matrix)
 Koonin_code_cost = get_code_cost(Koonin_codon_matrix)
+Higgs_code_cost = get_code_cost(Higgs_codon_matrix)
 
 print("SeqPredNN code cost: " + str(SeqPredNN_code_cost))
 print("SeqPredNN min: " + str(min(SeqPredNN_check)))
 print("SeqPredNN max: " + str(max(SeqPredNN_check)))
+print()
 print("Koonin code cost: " + str(Koonin_code_cost))
 print("Koonin min: " + str(min(Koonin_check)))
 print("Koonin max: " + str(max(Koonin_check)))
+print()
+print("Higgs code cost: " + str(Higgs_code_cost))
+print("Higgs min: " + str(min(Higgs_check)))
+print("Higgs max: " + str(max(Higgs_check)))
+print()
 
 print("NORM SeqPredNN code cost: " + str(get_code_cost(SeqPredNN_codon_matrix_NORM)))
 print("NORM Koonin code cost: " + str(get_code_cost(Koonin_codon_matrix_NORM)))
+print("NORM Higgs code cost: " + str(get_code_cost(Higgs_codon_matrix_NORM)))
 
 #generate 10,000 random codon assignments for SeqPredNN model and calculate code costs for each assignment
 SeqPredNN_sample_code_costs = []
 SeqPredNN_sample_code_costs_NORM = []
 Koonin_sample_code_costs = []
 Koonin_sample_code_costs_NORM = []
+Higgs_sample_code_costs = []
+Higgs_sample_code_costs_NORM = []
 generate_sample_set(8000, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
 
+SeqPredNN_check.sort()
+Koonin_check.sort()
+Higgs_check.sort()
+
 #Spearman's rank correlation coefficient:
-print("******************** SPEARMAN'S RANK CORRELATION COEFFICIENTS ON RANDOMLY GENERATED CODON DISTRIBUTIONS ********************")
-print("SeqPredNN vs Koonin: ")
-print(spearmanr(SeqPredNN_sample_code_costs, Koonin_sample_code_costs, alternative='less'))
-print()
-print("SeqPredNN norm vs Koonin norm: ")
-print(spearmanr(SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs_NORM, alternative='less'))
-print()
+spearmans_rank_correlation_tests()
+
 
 #generate .csv files
-# make_csvs()
+make_csvs()
 
 # #generate plots
-# confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, SeqPredNN_cost_min, SeqPredNN_cost_max, "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
+# confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
 # confusion_matrix(SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_codon_matrix_NORM, min(SeqPredNN_check_NORM), max(SeqPredNN_check_NORM), "SeqPredNN_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
-# confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, Koonin_cost_min, Koonin_cost_max, "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
+# confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
 # confusion_matrix(Koonin_codon_matrix_NORM_PLOTS, Koonin_codon_matrix_NORM, min(Koonin_check_NORM), max(Koonin_check_NORM), "Koonin_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing the Polarity Requirement Index")
-# confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, neutral_cost_min, neutral_cost_max, "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
+# confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, min(neutral_check), max(neutral_check), "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
