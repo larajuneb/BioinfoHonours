@@ -13,6 +13,7 @@ from scipy.stats import kstest
 from scipy.stats import normaltest
 from scipy.stats import shapiro 
 from scipy.stats import spearmanr 
+from scipy.stats import ks_2samp
 import sklearn.metrics as metrics
 
 #generate normalised substitution matrix list from .csv
@@ -241,85 +242,71 @@ def is_it_gaussian(dataset):
     kstest(dataset, 'norm')
     return 0
 #generate 10,000 random assignments of codons and calculate costs for each
-def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM):
+
+def generate_sample_set(sample_size, sample_code_costs, sample_code_costs_NORM, mode_code_cost, mode_code_cost_NORM, mode):
     random_codon_assignments = {} #similar to codons_per_aa dict, but instead of true codon assignments, the codons are assigned randomly to amino acids
     leftover = []
     stop = []
     code_costs = []
     norm_code_costs = []
     no_stop_codons = []
-    for j in range(2):
-        for i in range(sample_size):
-            temp_cost_matrix = [[0 for x in range(61)] for y in range(61)]
-            norm_cost_matrix = [[0 for x in range(61)] for y in range(61)]
-            matrix_min_max_check = []
-            minimum = 0
-            maximum = 0
-            leftover = regenerate_codon_matrix(leftover)
-            no_stop_codons = regenerate_codon_matrix(no_stop_codons)
-            for key, value in number_of_codons_per_aa.items():
-                random_codon_assignments[key] = [] #a new random codon assignment for each sample, key = amino acid, value = array of codons
-                for i in range(number_of_codons_per_aa[key]): #loop through as many times as there are codons for that amino acid
-                    codon = random.choice(leftover) #choose a random codon for the amino acid 
-                    leftover.remove(codon) #remove that codon from the list of available codons
-                    random_codon_assignments[key].append(codon) #add the randomly chose codon to the list of codons for that amino acid
-            stop = random_codon_assignments.get("stop")
-            #random codon assignment have been made, now calculate cost matrix and overall cost
-            for codon in stop:
-                no_stop_codons.remove(codon)
-            
-            for row in range(61):
-                for cell in range(61):
-                    if j == 0:
-                        temp_cost_matrix[row][cell] = get_cost(row, cell, "SeqPredNN", random_codon_assignments, no_stop_codons, False)
-                    elif j == 1:
-                        temp_cost_matrix[row][cell] = get_cost(row, cell, "Koonin", random_codon_assignments, no_stop_codons, False)
-
-                    if not isinstance(temp_cost_matrix[row][cell], str):
-                        matrix_min_max_check.append(temp_cost_matrix[row][cell])
-            #get code cost for raw data matrix
-            minimum = min(matrix_min_max_check)
-            maximum = max(matrix_min_max_check)
-            code_costs.append(get_code_cost(temp_cost_matrix))
-
-            #get code cost for normalised data matrix
-            norm_cost_matrix = normalise_matrix_SAMPLES(minimum, maximum, temp_cost_matrix)
-
-            norm_code_costs.append(get_code_cost(norm_cost_matrix))
-
-            if j == 0:
-                SeqPredNN_sample_code_costs.append(get_code_cost(temp_cost_matrix))
-                SeqPredNN_sample_code_costs_NORM.append(get_code_cost(norm_cost_matrix))
-            if j == 1:
-                Koonin_sample_code_costs.append(get_code_cost(temp_cost_matrix))
-                Koonin_sample_code_costs_NORM.append(get_code_cost(norm_cost_matrix))
-
-            random_codon_assignments.clear() #clear random codon assignment for next sample
-            no_stop_codons.clear()
-            stop.clear()
-            temp_cost_matrix = [[0 for x in range(61)] for y in range(61)]
-            norm_cost_matrix = [[0 for x in range(61)] for y in range(61)]
-
-        if j == 0:
-            print("************************************ SEQPREDNN ************************************")
-        elif j == 1:
-            print("************************************ KOONIN ************************************")
-        print("----------------------- series -----------------------")
-        series = pd.Series(code_costs)
-        print(series.describe())
-        print("----------------------- norm series -----------------------")
-        series_norm = pd.Series(norm_code_costs)
-        print(series_norm.describe())
+    for i in range(sample_size):
+        temp_cost_matrix = [[0 for x in range(61)] for y in range(61)]
+        norm_cost_matrix = [[0 for x in range(61)] for y in range(61)]
+        matrix_min_max_check = []
+        minimum = 0
+        maximum = 0
+        leftover = regenerate_codon_matrix(leftover)
+        no_stop_codons = regenerate_codon_matrix(no_stop_codons)
+        for key, value in number_of_codons_per_aa.items():
+            random_codon_assignments[key] = [] #a new random codon assignment for each sample, key = amino acid, value = array of codons
+            for i in range(number_of_codons_per_aa[key]): #loop through as many times as there are codons for that amino acid
+                codon = random.choice(leftover) #choose a random codon for the amino acid 
+                leftover.remove(codon) #remove that codon from the list of available codons
+                random_codon_assignments[key].append(codon) #add the randomly chose codon to the list of codons for that amino acid
+        stop = random_codon_assignments.get("stop")
+        #random codon assignment have been made, now calculate cost matrix and overall cost
+        for codon in stop:
+            no_stop_codons.remove(codon)
         
-        if j == 0:
-            plot_samples(sample_size, code_costs, "SeqPredNN", False)
-            plot_samples(sample_size, norm_code_costs, "SeqPredNN", True)
-        if j == 1:
-            plot_samples(sample_size, code_costs, "Koonin", False)
-            plot_samples(sample_size, norm_code_costs, "Koonin", True)
+        for row in range(61):
+            for cell in range(61):
+                temp_cost_matrix[row][cell] = get_cost(row, cell, mode, random_codon_assignments, no_stop_codons, False)
 
-        code_costs.clear()
-        norm_code_costs.clear()
+                if not isinstance(temp_cost_matrix[row][cell], str):
+                    matrix_min_max_check.append(temp_cost_matrix[row][cell])
+        #get code cost for raw data matrix
+        minimum = min(matrix_min_max_check)
+        maximum = max(matrix_min_max_check)
+        code_costs.append(get_code_cost(temp_cost_matrix))
+
+        #get code cost for normalised data matrix
+        norm_cost_matrix = normalise_matrix_SAMPLES(minimum, maximum, temp_cost_matrix)
+
+        norm_code_costs.append(get_code_cost(norm_cost_matrix))
+
+        sample_code_costs.append(get_code_cost(temp_cost_matrix))
+        sample_code_costs_NORM.append(get_code_cost(norm_cost_matrix))
+
+        random_codon_assignments.clear() #clear random codon assignment for next sample
+        no_stop_codons.clear()
+        stop.clear()
+        temp_cost_matrix = [[0 for x in range(61)] for y in range(61)]
+        norm_cost_matrix = [[0 for x in range(61)] for y in range(61)]
+
+    print("************************************ " + mode + " ************************************")
+    print("----------------------- series -----------------------")
+    series = pd.Series(code_costs)
+    print(series.describe())
+    print("----------------------- norm series -----------------------")
+    series_norm = pd.Series(norm_code_costs)
+    print(series_norm.describe())
+    
+    plot_samples(sample_size, code_costs, mode, False, mode_code_cost)
+    plot_samples(sample_size, norm_code_costs, mode, True, mode_code_cost_NORM)
+
+    code_costs.clear()
+    norm_code_costs.clear()
     
     # print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
     # print("SeqPredNN_sample_code_costs: " + str(shapiro(SeqPredNN_sample_code_costs)))
@@ -349,7 +336,9 @@ def generate_sample_set(sample_size, SeqPredNN_sample_code_costs, SeqPredNN_samp
     #     print("Normal = TRUE")
     
 #plot bar graphs for samples produced
-def plot_samples(sample_size, costs, model, normalised):
+def plot_samples(sample_size, costs, model, normalised, code_cost):
+    filename = ""
+    title = ""
     costs_temp = []
     for item in costs:
         costs_temp.append(item)
@@ -381,31 +370,43 @@ def plot_samples(sample_size, costs, model, normalised):
         y.append(bin_counts[key])
         count += 1
 
-    plt.figure(figsize=(10, 8))
-    plt.bar(x_bins, y)
-    plt.xticks(rotation = 20)
+    # plt.figure(figsize=(10, 8))
+    # plt.bar(x_bins, y)
+    # plt.xticks(rotation = 20)
     if normalised == False:
-        plt.title("Number of occurrences of randomly simulated code costs per bracket for models generated\n using the " + model + " method")
+        title = "Number of occurrences of randomly simulated code costs per bracket for models generated using the " + model + " method\n Sample size = " + str(sample_size)
+        filename = "_samples_" + model
     if normalised == True:
-        plt.title("Number of occurrences of randomly simulated code costs per bracket for NORMALISED models\n generated using the " + model + " method")
-    plt.xlabel("Code cost")
-    plt.ylabel("Number of occurrences")
-    plt.show()
+        title = "Number of occurrences of randomly simulated code costs per bracket for NORMALISED models generated using the " + model + " method\n Sample size = " + str(sample_size)
+        filename = "_samples_" + model + "_NORM"
+    # plt.title(title)
+    # plt.xlabel("Code cost")
+    # plt.ylabel("Number of occurrences")
+    # plt.savefig("plots/bar" + f'{filename}.png')
+    # plt.show()
 #############################################
     
  
     # create histogram
-    plt.hist(costs, bins=num_bins)
+    line_label = model + " standard code cost"
+    plt.figure(figsize=(15, 10))
+    plt.hist(costs, bins=num_bins, edgecolor='white', linewidth=0.3)
+    plt.axvline(x = code_cost, color = 'red', linestyle = '--', label = line_label)
+    plt.text(code_cost + (0.01*(maxi-mini)), 2, rotation='vertical', s=line_label)
+    plt.xlabel("Code cost")
+    plt.ylabel("Number of occurrences")
+    plt.title(title)
+    plt.savefig("plots/hist" + f'{filename}.png')
     
     # display histogram
-    plt.show()
+    # plt.show()
     ###############################################
 
     return 0
 
 #make csv files of all matrices
 def make_csvs():
-    filename = "SeqPredNN_cost_matrix.csv"
+    filename = "csvs/SeqPredNN_cost_matrix.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -414,7 +415,7 @@ def make_csvs():
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
 
-    filename = "Koonin_cost_matrix.csv"
+    filename = "csvs/Koonin_cost_matrix.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -423,7 +424,7 @@ def make_csvs():
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
 
-    filename = "SeqPredNN_cost_matrix_NORM.csv"
+    filename = "csvs/SeqPredNN_cost_matrix_NORM.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -432,7 +433,7 @@ def make_csvs():
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
 
-    filename = "Koonin_cost_matrix_NORM.csv"
+    filename = "csvs/Koonin_cost_matrix_NORM.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -441,7 +442,7 @@ def make_csvs():
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
 
-    filename = "Neutral_subst_cost_matrix.csv"
+    filename = "csvs/Neutral_subst_cost_matrix.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -450,7 +451,7 @@ def make_csvs():
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
     
-    filename = "Higgs_cost_matrix.csv"
+    filename = "csvs/Higgs_cost_matrix.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -459,7 +460,7 @@ def make_csvs():
             file.write(codons_excl_stop[counter] + "," + ",".join(map(str, codon_list)) + "\n")
             counter += 1
 
-    filename = "Higgs_cost_matrix_NORM.csv"
+    filename = "csvs/Higgs_cost_matrix_NORM.csv"
     codon_string = " ," + ",".join(codons_excl_stop) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -553,7 +554,7 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename, t
     cbar = fig.colorbar(img, ax=ax, pad=0.01)
     cbar.ax.tick_params(labelsize=63, pad=14, length=14, width=3)
     fig.tight_layout()
-    plt.savefig(f'{filename}.png')
+    plt.savefig("plots/" + f'{filename}.png')
     plt.close()
 
 def spearmans_rank_correlation_tests():
@@ -649,6 +650,10 @@ SeqPredNN_code_cost = get_code_cost(SeqPredNN_codon_matrix)
 Koonin_code_cost = get_code_cost(Koonin_codon_matrix)
 Higgs_code_cost = get_code_cost(Higgs_codon_matrix)
 
+SeqPredNN_code_cost_NORM = get_code_cost(SeqPredNN_codon_matrix_NORM)
+Koonin_code_cost_NORM = get_code_cost(Koonin_codon_matrix_NORM)
+Higgs_code_cost_NORM = get_code_cost(Higgs_codon_matrix_NORM)
+
 print("SeqPredNN code cost: " + str(SeqPredNN_code_cost))
 print("SeqPredNN min: " + str(min(SeqPredNN_check)))
 print("SeqPredNN max: " + str(max(SeqPredNN_check)))
@@ -673,7 +678,20 @@ Koonin_sample_code_costs = []
 Koonin_sample_code_costs_NORM = []
 Higgs_sample_code_costs = []
 Higgs_sample_code_costs_NORM = []
-generate_sample_set(8000, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM)
+generate_sample_set(500, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN")
+generate_sample_set(500, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin")
+generate_sample_set(500, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs")
+
+# generate_sample_set(8000, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM)
+
+print(ks_2samp(SeqPredNN_sample_code_costs, Koonin_sample_code_costs))
+print(ks_2samp(SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs_NORM))
+
+print(ks_2samp(SeqPredNN_sample_code_costs, Higgs_sample_code_costs))
+print(ks_2samp(SeqPredNN_sample_code_costs_NORM, Higgs_sample_code_costs_NORM))
+
+print(ks_2samp(Higgs_sample_code_costs, Koonin_sample_code_costs))
+print(ks_2samp(Higgs_sample_code_costs_NORM, Koonin_sample_code_costs_NORM))
 
 SeqPredNN_check.sort()
 Koonin_check.sort()
@@ -687,8 +705,8 @@ spearmans_rank_correlation_tests()
 make_csvs()
 
 # #generate plots
-# confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
-# confusion_matrix(SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_codon_matrix_NORM, min(SeqPredNN_check_NORM), max(SeqPredNN_check_NORM), "SeqPredNN_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
-# confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
-# confusion_matrix(Koonin_codon_matrix_NORM_PLOTS, Koonin_codon_matrix_NORM, min(Koonin_check_NORM), max(Koonin_check_NORM), "Koonin_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing the Polarity Requirement Index")
-# confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, min(neutral_check), max(neutral_check), "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
+confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
+confusion_matrix(SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_codon_matrix_NORM, min(SeqPredNN_check_NORM), max(SeqPredNN_check_NORM), "SeqPredNN_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
+confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
+confusion_matrix(Koonin_codon_matrix_NORM_PLOTS, Koonin_codon_matrix_NORM, min(Koonin_check_NORM), max(Koonin_check_NORM), "Koonin_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing the Polarity Requirement Index")
+confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, min(neutral_check), max(neutral_check), "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
