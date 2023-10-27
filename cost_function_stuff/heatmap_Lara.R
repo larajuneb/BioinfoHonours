@@ -5,7 +5,7 @@ library(viridis)
 
 
 df <- read_csv(
-  "SeqPredNN_cost_matrix_NORM.csv"
+  "csvs/SeqPredNN_cost_matrix_NORM.csv"
                )
 
 df
