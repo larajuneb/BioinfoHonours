@@ -50,6 +50,17 @@ SeqPredNN_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 Koonin_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 Higgs_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 
+
+SeqPredNN_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+Koonin_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+Higgs_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+SeqPredNN_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
+Koonin_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
+Higgs_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
+SeqPredNN_primordial_check = []
+Koonin_primordial_check = []
+Higgs_primordial_check = []
+
 SeqPredNN_check = []
 SeqPredNN_check_NORM = []
 Koonin_check = []
@@ -588,6 +599,107 @@ def stats():
     #Spearman's rank correlation coefficient:
     spearmans_rank_correlation_tests()
 
+#generate cost of primordial code as presented by Koonin and Novozhilov Fig 12a
+def primordial_code_simulation(mode, output_matrix, matrix_check, output_matrix_NORM):
+    #_______________________________________
+    #       |   U   |   C   |   A   |   G   |
+    #-------|-------|-------|-------|-------|
+    #   U   |  Leu  |  Ser  |   *   |   *   |
+    #-------|-------|-------|-------|-------|
+    #   C   |  Leu  |  Pro  |  His  |  Arg  |
+    #-------|-------|-------|-------|-------|
+    #   A   |  Ile  |  Thr  |  Asn  |  Ser  |
+    #-------|-------|-------|-------|-------|
+    #   G   |  Val  |  Ala  |  Asp  |  Gly  |
+    #_______|_______|_______|_______|_______|
+
+    primordial_codons_per_aa = {"HIS": ['CA'], "ARG": ['CG'], "ASP": ['GA'], "ASN": ['AA'], "GLY": ['GG'], "ALA": ['GC'], "SER": ['UC', 'AG'], "THR": ['AC'], "PRO": ['CC'], "VAL": ['GU'], "ILE": ['AU'], "LEU": ['CU', 'UU']}
+    primordial_codons = ['UU', 'UC', 'UA', 'UG', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG']
+
+    for row in range(16):
+        for cell in range(16):
+            true_codon = primordial_codons[row]
+            mutant_codon = primordial_codons[cell]
+
+            if true_codon != mutant_codon and not (true_codon[0:1] != mutant_codon[0:1] and true_codon[1:2] != mutant_codon[1:2]): #not the same codon and only differ by 1 position
+                weight = 0
+                aa_diff = 0
+                # true_aa = ""
+                # mutant_aa = ""
+                if true_codon[0:1] != mutant_codon[0:1]: #differ at 1st position
+                    if tv_or_ts(true_codon[0:1], mutant_codon[0:1]) == "ts":
+                        weight = FreelandHurst_mutation_weights.get("1ts")
+                    elif tv_or_ts(true_codon[0:1], mutant_codon[0:1]) == "tv":
+                        weight = FreelandHurst_mutation_weights.get("1tv")
+                if true_codon[1:2] != mutant_codon[1:2]: #differ at 2nd position
+                    if tv_or_ts(true_codon[1:2], mutant_codon[1:2]) == "ts":
+                        weight = FreelandHurst_mutation_weights.get("2ts")
+                    elif tv_or_ts(true_codon[1:2], mutant_codon[1:2]) == "tv":
+                        weight = FreelandHurst_mutation_weights.get("2tv")
+                print("weight: " + str(weight))
+                for key, value in primordial_codons_per_aa.items():
+                    if true_codon in value:
+                        true_aa = key
+                    if mutant_codon in value:
+                        mutant_aa = key
+
+                
+                # print("true: " + true_codon + ", " + true_aa)
+                # print("mutant: " + mutant_codon + ", " + mutant_aa)
+                
+                if mode != "Higgs":
+                    true_aa_index = amino_acids.index(true_aa)
+                    mutant_aa_index = amino_acids.index(mutant_aa)
+                elif mode == "Higgs":
+                    true_aa_index = Higgs_amino_acid_order.index(true_aa)
+                    mutant_aa_index = Higgs_amino_acid_order.index(mutant_aa)
+
+                if mode == "SeqPredNN":
+                    aa_diff = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
+                elif mode == "Koonin":
+                    aa_diff = pow((polar_requirement_scale.get(true_aa) - polar_requirement_scale.get(mutant_aa)), 2)
+                elif mode == "Higgs":
+                    aa_diff = Higgs_distance_matrix[true_aa_index][mutant_aa_index]
+                elif mode == "neutral":
+                    aa_diff = 1
+
+                print("aa diff: " + str(aa_diff))
+                output_matrix[row][cell] = float(weight) * float(aa_diff)
+                matrix_check.append(output_matrix[row][cell])
+                print("cost: " + str(output_matrix[row][cell]))
+                
+            else:
+                output_matrix[row][cell] = '-'
+        
+        print(output_matrix[row])
+    
+    print("NORM:")
+    for row in range(16):
+        for cell in range(16):
+            if not isinstance(output_matrix[row][cell], str):
+                output_matrix_NORM[row][cell] = normalise_cost(min(matrix_check), max(matrix_check), output_matrix[row][cell])
+            else: 
+                output_matrix_NORM[row][cell] = output_matrix[row][cell]
+        print(output_matrix_NORM[row])
+    
+    filename = "matrices/" + mode + "_primordial_cost_matrix.csv"
+    codon_string = " ," + ",".join(primordial_codons) + "\n"
+    with open(filename, mode="w") as file:
+        file.write(codon_string) #first line
+        counter = 0
+        for codon_list in output_matrix:
+            file.write(primordial_codons[counter] + "," + ",".join(map(str, codon_list)) + "\n")
+            counter += 1
+    
+    filename = "matrices/" + mode + "_primordial_cost_matrix_NORM.csv"
+    codon_string = " ," + ",".join(primordial_codons) + "\n"
+    with open(filename, mode="w") as file:
+        file.write(codon_string) #first line
+        counter = 0
+        for codon_list in output_matrix_NORM:
+            file.write(primordial_codons[counter] + "," + ",".join(map(str, codon_list)) + "\n")
+            counter += 1
+
 #run calculations for SeqPredNN and Koonin matrices
 calculate_SeqPredNN_Koonin_and_Higgs_matrices()
 
@@ -616,9 +728,15 @@ store_cost_matrices()
 #generate stats and store in csvs
 stats()
 
+
 #generate plots
 confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
 confusion_matrix(SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_codon_matrix_NORM, min(SeqPredNN_check_NORM), max(SeqPredNN_check_NORM), "SeqPredNN_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
 confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
 confusion_matrix(Koonin_codon_matrix_NORM_PLOTS, Koonin_codon_matrix_NORM, min(Koonin_check_NORM), max(Koonin_check_NORM), "Koonin_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing the Polarity Requirement Index")
 confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, min(neutral_check), max(neutral_check), "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
+
+#primordial simulations
+primordial_code_simulation("SeqPredNN", SeqPredNN_primordial_codon_matrix, SeqPredNN_primordial_check, SeqPredNN_primordial_codon_matrix_NORM)
+primordial_code_simulation("Koonin", Koonin_primordial_codon_matrix, Koonin_primordial_check, Koonin_primordial_codon_matrix_NORM)
+primordial_code_simulation("Higgs", Higgs_primordial_codon_matrix, Higgs_primordial_check, Higgs_primordial_codon_matrix_NORM)
