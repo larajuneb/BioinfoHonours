@@ -5,7 +5,7 @@ library(viridis)
 
 
 df <- read_csv(
-  "/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/cost_function_stuff/matrices/Higgs_primordial_cost_matrix_NORM.csv"
+  "matrices/SeqPredNN_cost_matrix_NORM.csv"
                )
 
 df
@@ -32,26 +32,30 @@ df <- df %>%
   separate_wider_position(
     cols = `Initial Codon`,
     widths = c("Initial Position 1"=1, 
-               "Initial Position 2"= 1
+               "Initial Position 2"= 1,
+               "Initial Position 3" =1
                )
   ) %>%
   separate_wider_position(
     cols = `Final Codon`,
     widths = c("Final Position 1"=1, 
-               "Final Position 2"= 1
+               "Final Position 2"= 1,
+               "Final Position 3"=1
     )
   ) %>%
   mutate(
     Position = case_when(
       `Initial Position 1`!=`Final Position 1` ~ 1,
-      `Initial Position 2`!=`Final Position 2` ~ 2
+      `Initial Position 2`!=`Final Position 2` ~ 2,
+      `Initial Position 3`!=`Final Position 3` ~ 3,
       ),
     .before = 1
     ) %>%
   mutate(
     "Initial Codon" = paste(
       `Initial Position 1`, 
-      `Initial Position 2`,
+      `Initial Position 2`, 
+      `Initial Position 3`,
       sep = ""
       )
     ) %>%

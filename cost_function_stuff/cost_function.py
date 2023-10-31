@@ -718,9 +718,9 @@ Koonin_code_cost_NORM = get_code_cost(Koonin_codon_matrix_NORM)
 Higgs_code_cost_NORM = get_code_cost(Higgs_codon_matrix_NORM)
 
 #generate random codon assignments for SeqPredNN model and calculate code costs for each assignment
-generate_sample_set(500, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN")
-generate_sample_set(500, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin")
-generate_sample_set(500, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs")
+generate_sample_set(10000, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN")
+generate_sample_set(10000, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin")
+generate_sample_set(10000, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs")
 
 #generate .csv files
 store_cost_matrices()
@@ -730,13 +730,13 @@ stats()
 
 
 #generate plots
-confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
-confusion_matrix(SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_codon_matrix_NORM, min(SeqPredNN_check_NORM), max(SeqPredNN_check_NORM), "SeqPredNN_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
-confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
-confusion_matrix(Koonin_codon_matrix_NORM_PLOTS, Koonin_codon_matrix_NORM, min(Koonin_check_NORM), max(Koonin_check_NORM), "Koonin_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing the Polarity Requirement Index")
-confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, min(neutral_check), max(neutral_check), "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
+# confusion_matrix(SeqPredNN_codon_matrix_PLOTS, SeqPredNN_codon_matrix, min(SeqPredNN_check), max(SeqPredNN_check), "SeqPredNN_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
+# confusion_matrix(SeqPredNN_codon_matrix_NORM_PLOTS, SeqPredNN_codon_matrix_NORM, min(SeqPredNN_check_NORM), max(SeqPredNN_check_NORM), "SeqPredNN_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing SeqPredNN amino acid frequencies")
+# confusion_matrix(Koonin_codon_matrix_PLOTS, Koonin_codon_matrix, min(Koonin_check), max(Koonin_check), "Koonin_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing the Polarity Requirement Index")
+# confusion_matrix(Koonin_codon_matrix_NORM_PLOTS, Koonin_codon_matrix_NORM, min(Koonin_check_NORM), max(Koonin_check_NORM), "Koonin_codon_matrix_NORM", "Confusion matrix of normalised codon mutation costs calculated\nusing the Polarity Requirement Index")
+# confusion_matrix(neutral_substitution_matrix_PLOTS, neutral_substitution_matrix, min(neutral_check), max(neutral_check), "Neutral_subst_codon_matrix", "Confusion matrix of codon mutation costs calculated\nusing amino acid differences of 1 for all mutations")
 
 #primordial simulations
-primordial_code_simulation("SeqPredNN", SeqPredNN_primordial_codon_matrix, SeqPredNN_primordial_check, SeqPredNN_primordial_codon_matrix_NORM)
-primordial_code_simulation("Koonin", Koonin_primordial_codon_matrix, Koonin_primordial_check, Koonin_primordial_codon_matrix_NORM)
-primordial_code_simulation("Higgs", Higgs_primordial_codon_matrix, Higgs_primordial_check, Higgs_primordial_codon_matrix_NORM)
+# primordial_code_simulation("SeqPredNN", SeqPredNN_primordial_codon_matrix, SeqPredNN_primordial_check, SeqPredNN_primordial_codon_matrix_NORM)
+# primordial_code_simulation("Koonin", Koonin_primordial_codon_matrix, Koonin_primordial_check, Koonin_primordial_codon_matrix_NORM)
+# primordial_code_simulation("Higgs", Higgs_primordial_codon_matrix, Higgs_primordial_check, Higgs_primordial_codon_matrix_NORM)
