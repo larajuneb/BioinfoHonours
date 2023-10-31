@@ -104,7 +104,6 @@ plot <- df %>%
     cols = vars(
       `Position`
       ), 
-    
     )+
   coord_equal()
 

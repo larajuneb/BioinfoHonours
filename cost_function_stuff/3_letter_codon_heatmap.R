@@ -90,12 +90,10 @@ plot <- df %>%
     aes(
       x = Final,
       y = `Initial Codon`,
-      fill = Cost,
-      #colour = `Final Amino Acid`
+      fill = Cost
       )
     ) +
   geom_raster(
-    #linewidth=1
     )+
   theme_ipsum()+
   scale_fill_viridis()+
@@ -104,17 +102,20 @@ plot <- df %>%
       "U", "G", "C", "A"
       )
     )+
+  #facet_grid(
+  #  factor(
+  #    `Initial Position 1`,
+  #    levels=c(
+  #      "U", "G", "C", "A"
+  #      )
+  #    ) ~`Position`, 
+  #  scales="free_y"
+  #  )
+#plot
   facet_grid(
-    factor(
-      `Initial Position 1`,
-      levels=c(
-        "U", "G", "C", "A"
-        )
-      ) ~`Position`, 
-    scales="free_y"
-    )
-
+    cols = vars(
+      `Position`
+    ), 
+  )+
+  coord_equal()
 plot
-problems(plot)
-
-
