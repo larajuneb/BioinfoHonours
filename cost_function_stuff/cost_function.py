@@ -2,6 +2,7 @@ from cmath import sqrt
 from operator import index
 import random
 import csv
+from statistics import mean
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -568,13 +569,13 @@ def spearmans_rank_correlation_tests():
 def stats():
     filename = "stats/code_cost_stats.csv"
     with open(filename, mode="w") as file:
-        file.write(" , raw code cost, min, max, NORM code cost, min NORM, max NORM\n")
+        file.write(" , raw code cost, mean, min, max, NORM code cost, mean NORM, min NORM, max NORM\n")
 
-        file.write("SeqPredNN," + str(SeqPredNN_code_cost) + "," + str(min(SeqPredNN_check)) + "," + str(max(SeqPredNN_check)) + "," + str(SeqPredNN_code_cost_NORM) + "," + str(min(SeqPredNN_check_NORM)) + "," + str(max(SeqPredNN_check_NORM)) + "\n")
+        file.write("SeqPredNN," + str(SeqPredNN_code_cost) + "," + str(mean(SeqPredNN_check)) + "," + str(min(SeqPredNN_check)) + "," + str(max(SeqPredNN_check)) + "," + str(SeqPredNN_code_cost_NORM) + "," + str(mean(SeqPredNN_check_NORM)) + "," + str(min(SeqPredNN_check_NORM)) + "," + str(max(SeqPredNN_check_NORM)) + "\n")
 
-        file.write("Koonin," + str(Koonin_code_cost) + "," + str(min(Koonin_check)) + "," + str(max(Koonin_check)) + "," + str(Koonin_code_cost_NORM) + "," + str(min(Koonin_check_NORM)) + "," + str(max(Koonin_check_NORM)) + "\n")
+        file.write("Koonin," + str(Koonin_code_cost) + "," + str(mean(Koonin_check)) + "," + str(min(Koonin_check)) + "," + str(max(Koonin_check)) + "," + str(Koonin_code_cost_NORM) + "," + str(mean(Koonin_check_NORM)) + "," + str(min(Koonin_check_NORM)) + "," + str(max(Koonin_check_NORM)) + "\n")
 
-        file.write("Higgs," + str(Higgs_code_cost) + "," + str(min(Higgs_check)) + "," + str(max(Higgs_check)) + "," + str(Higgs_code_cost_NORM) + "," + str(min(Higgs_check_NORM)) + "," + str(max(Higgs_check_NORM)) + "\n")
+        file.write("Higgs," + str(Higgs_code_cost) + "," + str(mean(Higgs_check)) + "," + str(min(Higgs_check)) + "," + str(max(Higgs_check)) + "," + str(Higgs_code_cost_NORM) + "," + str(mean(Higgs_check_NORM)) + "," + str(min(Higgs_check_NORM)) + "," + str(max(Higgs_check_NORM)) + "\n")
         
     filename = "stats/Kolmogorov_Smirnov_tests.csv"
     with open(filename, mode="w") as file:

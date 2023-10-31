@@ -4,7 +4,7 @@ library(viridis)
 
 
 df <- read_csv(
-  "matrices/Koonin_primordial_cost_matrix_NORM.csv"
+  "matrices/Higgs_primordial_cost_matrix_NORM.csv"
                )
 
 df
