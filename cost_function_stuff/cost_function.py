@@ -36,8 +36,6 @@ SeqPredNN_codon_matrix = [[0 for x in range(61)] for y in range(61)]
 SeqPredNN_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 SeqPredNN_check = []
 SeqPredNN_check_NORM = []
-SeqPredNN_amino_acid_check = []
-SeqPredNN_amino_acid_check_NORM = []
 SeqPredNN_sample_code_costs = []
 SeqPredNN_sample_code_costs_NORM = []
 
@@ -64,6 +62,14 @@ neutral_check = []
 neutral_check_NORM = []
 neutral_sample_code_costs = []
 neutral_sample_code_costs_NORM = []
+
+#SeqPredNN amino acid substitutions only
+amino_acid_codon_matrix = [[0 for x in range(61)] for y in range(61)]
+amino_acid_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+amino_acid_check = []
+amino_acid_check_NORM = []
+amino_acid_sample_code_costs = []
+amino_acid_sample_code_costs_NORM = []
 
 #SeqPredNN primordial
 SeqPredNN_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
@@ -104,10 +110,6 @@ amino_acid_primordial_check = []
 amino_acid_primordial_check_NORM = []
 amino_acid_primordial_sample_code_costs = []
 amino_acid_primordial_sample_code_costs_NORM = []
-
-#SeqPredNN amino acid substitutions only
-amino_acid_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-amino_acid_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
 
 nucleotides = ['U', 'C', 'A', 'G']
 codons = []
@@ -389,8 +391,8 @@ def generate_sample_set(sample_size, sample_code_costs, sample_code_costs_NORM, 
         
     sample_set_stats(code_costs, norm_code_costs, model)
 
-    plot_samples(sample_size, code_costs, model, False, mode_code_cost, neutral_cost)
-    plot_samples(sample_size, norm_code_costs, model, True, mode_code_cost_NORM, neutral_cost_NORM)
+    plot_samples(sample_size, code_costs, model, False, mode_code_cost, neutral_cost, mode)
+    plot_samples(sample_size, norm_code_costs, model, True, mode_code_cost_NORM, neutral_cost_NORM, mode)
 
     code_costs.clear()
     norm_code_costs.clear()
@@ -408,7 +410,7 @@ def sample_set_stats(costs, norm_costs, mode):
         file.write(mode + "NORM," + str(series_norm.describe()[0]) + "," + str(series_norm.describe()[1]) + "," + str(series_norm.describe()[2]) + "," + str(series_norm.describe()[3]) + "," + str(series_norm.describe()[4]) + "," + str(series_norm.describe()[5]) + "," + str(series_norm.describe()[6]) + "," + str(series_norm.describe()[7]) + "\n")
 
 #plot bar graphs for samples produced
-def plot_samples(sample_size, costs, model, normalised, code_cost, neutral_cost):
+def plot_samples(sample_size, costs, model, normalised, code_cost, neutral_cost, mode):
     filename = ""
     title = ""
     costs_temp = []
@@ -444,11 +446,12 @@ def plot_samples(sample_size, costs, model, normalised, code_cost, neutral_cost)
 
     if normalised == False:
         title = "Number of occurrences of randomly simulated code costs per bracket for models generated using the " + model + " method\n Sample size = " + str(sample_size)
-        filename = "_samples_" + model
+        filename = "_samples_" + model + "_" + mode
     if normalised == True:
         title = "Number of occurrences of randomly simulated code costs per bracket for NORMALISED models generated using the " + model + " method\n Sample size = " + str(sample_size)
-        filename = "_samples_" + model + "_NORM"    
+        filename = "_samples_" + model + "_" + mode + "_NORM"    
  
+    print(model + ", code cost: " + str(code_cost))
     # create histogram
     line_label = model + " standard code cost"
     plt.figure(figsize=(15, 10))
@@ -456,9 +459,9 @@ def plot_samples(sample_size, costs, model, normalised, code_cost, neutral_cost)
     plt.axvline(x = code_cost, color = 'red', linestyle = '--', label = "hi")
     plt.text(code_cost + (0.01*(maxi-mini)), 2, rotation='vertical', s=line_label)
 
-    line_label = "Neutral substitutions standard code cost"
-    plt.axvline(x = neutral_cost, color = 'green', linestyle = '--', label = line_label)
-    plt.text(neutral_cost + (0.01*(maxi-mini)), 2, rotation='vertical', s=line_label)
+    # line_label = "Neutral substitutions standard code cost"
+    # plt.axvline(x = neutral_cost, color = 'green', linestyle = '--', label = line_label)
+    # plt.text(neutral_cost + (0.01*(maxi-mini)), 2, rotation='vertical', s=line_label)
     plt.xlabel("Code cost")
     plt.ylabel("Number of occurrences")
     plt.title(title)
@@ -578,67 +581,83 @@ def stats():
     with open(filename, mode="w") as file:
         file.write(" , raw code cost, mean, min, max, NORM code cost, mean NORM, min NORM, max NORM\n")
 
-        file.write("SeqPredNN," + str(SeqPredNN_code_cost) + "," + str(mean(SeqPredNN_check)) + "," + str(min(SeqPredNN_check)) + "," + str(max(SeqPredNN_check)) + "," + str(SeqPredNN_code_cost_NORM) + "," + str(mean(SeqPredNN_check_NORM)) + "," + str(min(SeqPredNN_check_NORM)) + "," + str(max(SeqPredNN_check_NORM)) + "\n")
+        # file.write("SeqPredNN," + str(SeqPredNN_code_cost) + "," + str(mean(SeqPredNN_check)) + "," + str(min(SeqPredNN_check)) + "," + str(max(SeqPredNN_check)) + "," + str(SeqPredNN_code_cost_NORM) + "," + str(mean(SeqPredNN_check_NORM)) + "," + str(min(SeqPredNN_check_NORM)) + "," + str(max(SeqPredNN_check_NORM)) + "\n")
 
-        file.write("Koonin," + str(Koonin_code_cost) + "," + str(mean(Koonin_check)) + "," + str(min(Koonin_check)) + "," + str(max(Koonin_check)) + "," + str(Koonin_code_cost_NORM) + "," + str(mean(Koonin_check_NORM)) + "," + str(min(Koonin_check_NORM)) + "," + str(max(Koonin_check_NORM)) + "\n")
+        # file.write("Koonin," + str(Koonin_code_cost) + "," + str(mean(Koonin_check)) + "," + str(min(Koonin_check)) + "," + str(max(Koonin_check)) + "," + str(Koonin_code_cost_NORM) + "," + str(mean(Koonin_check_NORM)) + "," + str(min(Koonin_check_NORM)) + "," + str(max(Koonin_check_NORM)) + "\n")
 
-        file.write("Higgs," + str(Higgs_code_cost) + "," + str(mean(Higgs_check)) + "," + str(min(Higgs_check)) + "," + str(max(Higgs_check)) + "," + str(Higgs_code_cost_NORM) + "," + str(mean(Higgs_check_NORM)) + "," + str(min(Higgs_check_NORM)) + "," + str(max(Higgs_check_NORM)) + "\n")
+        # file.write("Higgs," + str(Higgs_code_cost) + "," + str(mean(Higgs_check)) + "," + str(min(Higgs_check)) + "," + str(max(Higgs_check)) + "," + str(Higgs_code_cost_NORM) + "," + str(mean(Higgs_check_NORM)) + "," + str(min(Higgs_check_NORM)) + "," + str(max(Higgs_check_NORM)) + "\n")
+
+        # file.write("Neutral," + str(neutral_code_cost) + "," + str(mean(neutral_check)) + "," + str(min(neutral_check)) + "," + str(max(neutral_check)) + "," + str(neutral_code_cost_NORM) + "," + str(mean(neutral_check_NORM)) + "," + str(min(neutral_check_NORM)) + "," + str(max(neutral_check_NORM)) + "\n")
+
+        # file.write("Amino acid," + str(amino_acid_code_cost) + "," + str(mean(amino_acid_check)) + "," + str(min(amino_acid_check)) + "," + str(max(amino_acid_check)) + "," + str(amino_acid_code_cost_NORM) + "," + str(mean(amino_acid_check_NORM)) + "," + str(min(amino_acid_check_NORM)) + "," + str(max(amino_acid_check_NORM)) + "\n")
+
+        #primordial
+        file.write("SeqPredNN primordial," + str(SeqPredNN_primordial_code_cost) + "," + str(mean(SeqPredNN_primordial_check)) + "," + str(min(SeqPredNN_primordial_check)) + "," + str(max(SeqPredNN_primordial_check)) + "," + str(SeqPredNN_primordial_code_cost_NORM) + "," + str(mean(SeqPredNN_primordial_check_NORM)) + "," + str(min(SeqPredNN_primordial_check_NORM)) + "," + str(max(SeqPredNN_primordial_check_NORM)) + "\n")
+
+        file.write("Koonin primordial," + str(Koonin_primordial_code_cost) + "," + str(mean(Koonin_primordial_check)) + "," + str(min(Koonin_primordial_check)) + "," + str(max(Koonin_primordial_check)) + "," + str(Koonin_primordial_code_cost_NORM) + "," + str(mean(Koonin_primordial_check_NORM)) + "," + str(min(Koonin_primordial_check_NORM)) + "," + str(max(Koonin_primordial_check_NORM)) + "\n")
+
+        file.write("Higgs primordial," + str(Higgs_primordial_code_cost) + "," + str(mean(Higgs_primordial_check)) + "," + str(min(Higgs_primordial_check)) + "," + str(max(Higgs_primordial_check)) + "," + str(Higgs_primordial_code_cost_NORM) + "," + str(mean(Higgs_primordial_check_NORM)) + "," + str(min(Higgs_primordial_check_NORM)) + "," + str(max(Higgs_primordial_check_NORM)) + "\n")
+
+        file.write("Neutral primordial," + str(neutral_primordial_code_cost) + "," + str(mean(neutral_primordial_check)) + "," + str(min(neutral_primordial_check)) + "," + str(max(neutral_primordial_check)) + "," + str(neutral_primordial_code_cost_NORM) + "," + str(mean(neutral_primordial_check_NORM)) + "," + str(min(neutral_primordial_check_NORM)) + "," + str(max(neutral_primordial_check_NORM)) + "\n")
+
+        file.write("Amino acid primordial," + str(amino_acid_primordial_code_cost) + "," + str(mean(amino_acid_primordial_check)) + "," + str(min(amino_acid_primordial_check)) + "," + str(max(amino_acid_primordial_check)) + "," + str(amino_acid_primordial_code_cost_NORM) + "," + str(mean(amino_acid_primordial_check_NORM)) + "," + str(min(amino_acid_primordial_check_NORM)) + "," + str(max(amino_acid_primordial_check_NORM)) + "\n")
         
-    filename = "TRY/stats/Kolmogorov_Smirnov_tests.csv"
-    with open(filename, mode="w") as file:
-        file.write("sample code costs test, statistic, p-value\n")
+    # filename = "TRY/stats/Kolmogorov_Smirnov_tests.csv"
+    # with open(filename, mode="w") as file:
+    #     file.write("sample code costs test, statistic, p-value\n")
 
-        file.write("SeqPredNN vs Koonin," + str(ks_2samp(SeqPredNN_sample_code_costs, Koonin_sample_code_costs).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs, Koonin_sample_code_costs).pvalue)+ "\n")
+    #     file.write("SeqPredNN vs Koonin," + str(ks_2samp(SeqPredNN_sample_code_costs, Koonin_sample_code_costs).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs, Koonin_sample_code_costs).pvalue)+ "\n")
 
-        file.write("SeqPredNN NORM vs Koonin NORM," + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).pvalue)+ "\n")
+    #     file.write("SeqPredNN NORM vs Koonin NORM," + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).pvalue)+ "\n")
 
-        file.write("SeqPredNN vs Higgs," + str(ks_2samp(SeqPredNN_sample_code_costs, Higgs_sample_code_costs).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs, Higgs_sample_code_costs).pvalue)+ "\n")
+    #     file.write("SeqPredNN vs Higgs," + str(ks_2samp(SeqPredNN_sample_code_costs, Higgs_sample_code_costs).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs, Higgs_sample_code_costs).pvalue)+ "\n")
 
-        file.write("SeqPredNN NORM vs Higgs NORM," + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Higgs_sample_code_costs_NORM).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Higgs_sample_code_costs_NORM).pvalue)+ "\n")
+    #     file.write("SeqPredNN NORM vs Higgs NORM," + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Higgs_sample_code_costs_NORM).statistic) + ","  + str(ks_2samp(SeqPredNN_sample_code_costs_NORM, Higgs_sample_code_costs_NORM).pvalue)+ "\n")
 
-        file.write("Higgs vs Koonin," + str(ks_2samp(Higgs_sample_code_costs, Koonin_sample_code_costs).statistic) + ","  + str(ks_2samp(Higgs_sample_code_costs, Koonin_sample_code_costs).pvalue)+ "\n")
+    #     file.write("Higgs vs Koonin," + str(ks_2samp(Higgs_sample_code_costs, Koonin_sample_code_costs).statistic) + ","  + str(ks_2samp(Higgs_sample_code_costs, Koonin_sample_code_costs).pvalue)+ "\n")
 
-        file.write("Higgs NORM vs Koonin NORM," + str(ks_2samp(Higgs_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).statistic) + ","  + str(ks_2samp(Higgs_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).pvalue)+ "\n")
+    #     file.write("Higgs NORM vs Koonin NORM," + str(ks_2samp(Higgs_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).statistic) + ","  + str(ks_2samp(Higgs_sample_code_costs_NORM, Koonin_sample_code_costs_NORM).pvalue)+ "\n")
 
-    SeqPredNN_check.sort()
-    Koonin_check.sort()
-    Higgs_check.sort()
+    # SeqPredNN_check.sort()
+    # Koonin_check.sort()
+    # Higgs_check.sort()
 
-    #Spearman's rank correlation coefficient:
-    spearmans_rank_correlation_tests()
+    # #Spearman's rank correlation coefficient:
+    # spearmans_rank_correlation_tests()
 
 #run calculations for SeqPredNN, Koonin, Higgs, neutral and amino-acid substitution matrices
-calculate_cost_matrix(SeqPredNN_codon_matrix, SeqPredNN_check, "SeqPredNN", "standard")
-calculate_cost_matrix(Koonin_codon_matrix, Koonin_check, "Koonin", "standard")
-calculate_cost_matrix(Higgs_codon_matrix, Higgs_check, "Higgs", "standard")
-calculate_cost_matrix(neutral_codon_matrix, neutral_check, "neutral", "standard")
-calculate_cost_matrix(amino_acid_codon_matrix, SeqPredNN_amino_acid_check, "amino-acid", "standard")
-print(SeqPredNN_amino_acid_check)
+# calculate_cost_matrix(SeqPredNN_codon_matrix, SeqPredNN_check, "SeqPredNN", "standard")
+# calculate_cost_matrix(Koonin_codon_matrix, Koonin_check, "Koonin", "standard")
+# calculate_cost_matrix(Higgs_codon_matrix, Higgs_check, "Higgs", "standard")
+# calculate_cost_matrix(neutral_codon_matrix, neutral_check, "neutral", "standard")
+# calculate_cost_matrix(amino_acid_codon_matrix, amino_acid_check, "amino-acid", "standard")
+# print(amino_acid_check)
 
 #create normalised codon mutation cost matrices
-SeqPredNN_codon_matrix_NORM = normalise_matrix(min(SeqPredNN_check), max(SeqPredNN_check), SeqPredNN_codon_matrix, SeqPredNN_check_NORM)
-Koonin_codon_matrix_NORM = normalise_matrix(min(Koonin_check), max(Koonin_check), Koonin_codon_matrix, Koonin_check_NORM)
-Higgs_codon_matrix_NORM = normalise_matrix(min(Higgs_check), max(Higgs_check), Higgs_codon_matrix, Higgs_check_NORM)
-neutral_codon_matrix_NORM = normalise_matrix(min(neutral_check), max(neutral_check), neutral_codon_matrix, neutral_check_NORM)
-amino_acid_codon_matrix_NORM = normalise_matrix(min(SeqPredNN_amino_acid_check), max(SeqPredNN_amino_acid_check), amino_acid_codon_matrix, SeqPredNN_amino_acid_check_NORM)
+# SeqPredNN_codon_matrix_NORM = normalise_matrix(min(SeqPredNN_check), max(SeqPredNN_check), SeqPredNN_codon_matrix, SeqPredNN_check_NORM)
+# Koonin_codon_matrix_NORM = normalise_matrix(min(Koonin_check), max(Koonin_check), Koonin_codon_matrix, Koonin_check_NORM)
+# Higgs_codon_matrix_NORM = normalise_matrix(min(Higgs_check), max(Higgs_check), Higgs_codon_matrix, Higgs_check_NORM)
+# neutral_codon_matrix_NORM = normalise_matrix(min(neutral_check), max(neutral_check), neutral_codon_matrix, neutral_check_NORM)
+# amino_acid_codon_matrix_NORM = normalise_matrix(min(amino_acid_check), max(amino_acid_check), amino_acid_codon_matrix, amino_acid_check_NORM)
 
 #get overall code cost for all matrices
-SeqPredNN_code_cost = get_code_cost(SeqPredNN_codon_matrix)
-Koonin_code_cost = get_code_cost(Koonin_codon_matrix)
-Higgs_code_cost = get_code_cost(Higgs_codon_matrix)
-neutral_code_cost = get_code_cost(neutral_codon_matrix)
-amino_acid_code_cost = get_code_cost(amino_acid_codon_matrix)
+# SeqPredNN_code_cost = get_code_cost(SeqPredNN_codon_matrix)
+# Koonin_code_cost = get_code_cost(Koonin_codon_matrix)
+# Higgs_code_cost = get_code_cost(Higgs_codon_matrix)
+# neutral_code_cost = get_code_cost(neutral_codon_matrix)
+# amino_acid_code_cost = get_code_cost(amino_acid_codon_matrix)
 
-SeqPredNN_code_cost_NORM = get_code_cost(SeqPredNN_codon_matrix_NORM)
-Koonin_code_cost_NORM = get_code_cost(Koonin_codon_matrix_NORM)
-Higgs_code_cost_NORM = get_code_cost(Higgs_codon_matrix_NORM)
-neutral_code_cost_NORM = get_code_cost(neutral_codon_matrix_NORM)
-amino_acid_code_cost_NORM = get_code_cost(amino_acid_codon_matrix_NORM)
+# SeqPredNN_code_cost_NORM = get_code_cost(SeqPredNN_codon_matrix_NORM)
+# Koonin_code_cost_NORM = get_code_cost(Koonin_codon_matrix_NORM)
+# Higgs_code_cost_NORM = get_code_cost(Higgs_codon_matrix_NORM)
+# neutral_code_cost_NORM = get_code_cost(neutral_codon_matrix_NORM)
+# amino_acid_code_cost_NORM = get_code_cost(amino_acid_codon_matrix_NORM)
 
-generate_sample_set(100, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(100, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(100, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(100, neutral_sample_code_costs, neutral_sample_code_costs_NORM, neutral_code_cost, neutral_code_cost_NORM, "neutral", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
+# generate_sample_set(100, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
+# generate_sample_set(100, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
+# generate_sample_set(100, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
+# generate_sample_set(100, neutral_sample_code_costs, neutral_sample_code_costs_NORM, neutral_code_cost, neutral_code_cost_NORM, "neutral", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
+# generate_sample_set(100, amino_acid_sample_code_costs, amino_acid_sample_code_costs_NORM, amino_acid_code_cost, amino_acid_code_cost_NORM, "amino-acid", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
 
 calculate_cost_matrix(SeqPredNN_primordial_codon_matrix, SeqPredNN_primordial_check, "SeqPredNN", "primordial")
 calculate_cost_matrix(Koonin_primordial_codon_matrix, Koonin_primordial_check, "Koonin", "primordial")
@@ -651,7 +670,7 @@ SeqPredNN_primordial_code_cost = get_code_cost(SeqPredNN_primordial_codon_matrix
 Koonin_primordial_code_cost = get_code_cost(Koonin_primordial_codon_matrix)
 Higgs_primordial_code_cost = get_code_cost(Higgs_primordial_codon_matrix)
 neutral_primordial_code_cost = get_code_cost(neutral_primordial_codon_matrix)
-amino_acid_primordial_code_cost = get_code_cost(amino_acid_codon_matrix)
+amino_acid_primordial_code_cost = get_code_cost(amino_acid_primordial_codon_matrix)
 
 #create normalised codon mutation cost matrices
 SeqPredNN_primordial_codon_matrix_NORM = normalise_matrix(min(SeqPredNN_primordial_check), max(SeqPredNN_primordial_check), SeqPredNN_primordial_codon_matrix, SeqPredNN_primordial_check_NORM)
@@ -666,11 +685,11 @@ Higgs_primordial_code_cost_NORM = get_code_cost(Higgs_primordial_codon_matrix_NO
 neutral_primordial_code_cost_NORM = get_code_cost(neutral_primordial_codon_matrix_NORM)
 amino_acid_primordial_code_cost_NORM = get_code_cost(amino_acid_primordial_codon_matrix_NORM)
 
-generate_sample_set(100, SeqPredNN_primordial_sample_code_costs, SeqPredNN_primordial_sample_code_costs_NORM, SeqPredNN_primordial_code_cost, SeqPredNN_primordial_code_cost_NORM, "SeqPredNN", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(100, Koonin_primordial_sample_code_costs, Koonin_primordial_sample_code_costs_NORM, Koonin_primordial_code_cost, Koonin_primordial_code_cost_NORM, "Koonin", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(100, Higgs_primordial_sample_code_costs, Higgs_primordial_sample_code_costs_NORM, Higgs_primordial_code_cost, Higgs_primordial_code_cost_NORM, "Higgs", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(100, neutral_primordial_sample_code_costs, neutral_primordial_sample_code_costs_NORM, neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "neutral", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(100, amino_acid_primordial_sample_code_costs, amino_acid_primordial_sample_code_costs_NORM, amino_acid_primordial_code_cost, amino_acid_primordial_code_cost_NORM, "amino-acid", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
+generate_sample_set(10000, SeqPredNN_primordial_sample_code_costs, SeqPredNN_primordial_sample_code_costs_NORM, SeqPredNN_primordial_code_cost, SeqPredNN_primordial_code_cost_NORM, "SeqPredNN", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
+generate_sample_set(10000, Koonin_primordial_sample_code_costs, Koonin_primordial_sample_code_costs_NORM, Koonin_primordial_code_cost, Koonin_primordial_code_cost_NORM, "Koonin", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
+generate_sample_set(10000, Higgs_primordial_sample_code_costs, Higgs_primordial_sample_code_costs_NORM, Higgs_primordial_code_cost, Higgs_primordial_code_cost_NORM, "Higgs", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
+generate_sample_set(10000, neutral_primordial_sample_code_costs, neutral_primordial_sample_code_costs_NORM, neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "neutral", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
+generate_sample_set(10000, amino_acid_primordial_sample_code_costs, amino_acid_primordial_sample_code_costs_NORM, amino_acid_primordial_code_cost, amino_acid_primordial_code_cost_NORM, "amino-acid", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
 
 #generate .csv files
 store_cost_matrices("SeqPredNN_cost_matrix", SeqPredNN_codon_matrix)
@@ -695,6 +714,7 @@ store_cost_matrices("primordial/Neutral_primordial_subst_cost_matrix", neutral_p
 store_cost_matrices("primordial/Neutral_primordial_subst_cost_matrix_NORM", neutral_primordial_codon_matrix_NORM)
 store_cost_matrices("primordial/Amino_primordial_acid_codon_matrix", amino_acid_primordial_codon_matrix)
 store_cost_matrices("primordial/Amino_primordial_acid_codon_matrix_NORM", amino_acid_primordial_codon_matrix_NORM)
+print(amino_acid_primordial_codon_matrix)
 
 #generate stats and store in csvs
-# stats()
+stats()
