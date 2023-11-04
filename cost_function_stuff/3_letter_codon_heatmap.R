@@ -2,7 +2,6 @@ library(tidyverse)
 library(hrbrthemes)
 library(plotly)
 library(viridis)
-library(RColorBrewer)
 
 
 df <- read_csv(
@@ -97,7 +96,7 @@ plot <- df %>%
   geom_raster(
     )+
   theme_ipsum()+
-  scale_fill_brewer(palette="Greys")+
+  scale_fill_viridis()+
   scale_x_discrete(
     limits=c(
       "U", "G", "C", "A"
