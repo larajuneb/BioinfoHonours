@@ -37,48 +37,48 @@ for row in range(len(Higgs_distance_matrix)):
 
 ########################################## STANDARD ##########################################
 #SeqPredNN codon matrix
-SeqPredNN_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-SeqPredNN_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+SeqPredNN_codon_matrix = [[0 for x in range(64)] for y in range(64)]
+SeqPredNN_codon_matrix_NORM = [[0 for x in range(64)] for y in range(64)]
 SeqPredNN_check = []
 SeqPredNN_check_NORM = []
 SeqPredNN_sample_code_costs = []
 SeqPredNN_sample_code_costs_NORM = []
 
 #Koonin codon matrix
-Koonin_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-Koonin_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+Koonin_codon_matrix = [[0 for x in range(64)] for y in range(64)]
+Koonin_codon_matrix_NORM = [[0 for x in range(64)] for y in range(64)]
 Koonin_check = []
 Koonin_check_NORM = []
 Koonin_sample_code_costs = []
 Koonin_sample_code_costs_NORM = []
 
 #Higgs codon matrix
-Higgs_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-Higgs_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+Higgs_codon_matrix = [[0 for x in range(64)] for y in range(64)]
+Higgs_codon_matrix_NORM = [[0 for x in range(64)] for y in range(64)]
 Higgs_check = []
 Higgs_check_NORM = []
 Higgs_sample_code_costs = []
 Higgs_sample_code_costs_NORM = []
 
 #neutral
-neutral_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-neutral_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+neutral_codon_matrix = [[0 for x in range(64)] for y in range(64)]
+neutral_codon_matrix_NORM = [[0 for x in range(64)] for y in range(64)]
 neutral_check = []
 neutral_check_NORM = []
 neutral_sample_code_costs = []
 neutral_sample_code_costs_NORM = []
 
 #SeqPredNN amino acid substitutions only
-amino_acid_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-amino_acid_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+amino_acid_codon_matrix = [[0 for x in range(64)] for y in range(64)]
+amino_acid_codon_matrix_NORM = [[0 for x in range(64)] for y in range(64)]
 amino_acid_check = []
 amino_acid_check_NORM = []
 amino_acid_sample_code_costs = []
 amino_acid_sample_code_costs_NORM = []
 
 #PAM250
-PAM250_codon_matrix = [[0 for x in range(61)] for y in range(61)]
-PAM250_codon_matrix_NORM = [[0 for x in range(61)] for y in range(61)]
+PAM250_codon_matrix = [[0 for x in range(64)] for y in range(64)]
+PAM250_codon_matrix_NORM = [[0 for x in range(64)] for y in range(64)]
 PAM250_check = []
 PAM250_check_NORM = []
 PAM250_sample_code_costs = []
@@ -86,48 +86,48 @@ PAM250_sample_code_costs_NORM = []
 
 ########################################## PRIMORDIAL ##########################################
 #SeqPredNN primordial
-SeqPredNN_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
-SeqPredNN_primordial_codon_matrix_NORM = [[0 for x in range(14)] for y in range(14)]
+SeqPredNN_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+SeqPredNN_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
 SeqPredNN_primordial_check = []
 SeqPredNN_primordial_check_NORM = []
 SeqPredNN_primordial_sample_code_costs = []
 SeqPredNN_primordial_sample_code_costs_NORM = []
 
 #Koonin primordial
-Koonin_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
-Koonin_primordial_codon_matrix_NORM = [[0 for x in range(14)] for y in range(14)]
+Koonin_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+Koonin_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
 Koonin_primordial_check = []
 Koonin_primordial_check_NORM = []
 Koonin_primordial_sample_code_costs = []
 Koonin_primordial_sample_code_costs_NORM = []
 
 #Higgs primordial
-Higgs_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
-Higgs_primordial_codon_matrix_NORM = [[0 for x in range(14)] for y in range(14)]
+Higgs_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+Higgs_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
 Higgs_primordial_check = []
 Higgs_primordial_check_NORM = []
 Higgs_primordial_sample_code_costs = []
 Higgs_primordial_sample_code_costs_NORM = []
 
 #neutral primordial
-neutral_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
-neutral_primordial_codon_matrix_NORM = [[0 for x in range(14)] for y in range(14)]
+neutral_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+neutral_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
 neutral_primordial_check = []
 neutral_primordial_check_NORM = []
 neutral_primordial_sample_code_costs = []
 neutral_primordial_sample_code_costs_NORM = []
 
 #amino acid primordial
-amino_acid_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
-amino_acid_primordial_codon_matrix_NORM = [[0 for x in range(14)] for y in range(14)]
+amino_acid_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+amino_acid_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
 amino_acid_primordial_check = []
 amino_acid_primordial_check_NORM = []
 amino_acid_primordial_sample_code_costs = []
 amino_acid_primordial_sample_code_costs_NORM = []
 
 #PAM250
-PAM250_primordial_codon_matrix = [[0 for x in range(14)] for y in range(14)]
-PAM250_primordial_codon_matrix_NORM = [[0 for x in range(14)] for y in range(14)]
+PAM250_primordial_codon_matrix = [[0 for x in range(16)] for y in range(16)]
+PAM250_primordial_codon_matrix_NORM = [[0 for x in range(16)] for y in range(16)]
 PAM250_primordial_check = []
 PAM250_primordial_check_NORM = []
 PAM250_primordial_sample_code_costs = []
@@ -148,21 +148,23 @@ for first in nucleotides:
             codon = first + second + third
             codons.append(codon)
             codons_leftover.append(codon)
-            if codon not in stop:
-                codons_excl_stop.append(codon)
+            codons_excl_stop.append(codon)
+            # if codon not in stop:
+            #     codons_excl_stop.append(codon)
 
 number_of_codons_per_aa = {"HIS": 2, "ARG": 6, "LYS": 2, "GLN": 2, "GLU": 2, "ASP": 2, "ASN": 2, "GLY": 4, "ALA": 4, "SER": 6, "THR": 4, "PRO": 4, "CYS": 2, "VAL": 4, "ILE": 3, "MET": 1, "LEU": 6, "PHE": 2, "TYR": 2, "TRP": 1, "stop": 3}
-amino_acids = ["HIS", "ARG", "LYS", "GLN", "GLU", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "CYS", "VAL", "ILE", "MET", "LEU", "PHE", "TYR", "TRP"]
+amino_acids = ["HIS", "ARG", "LYS", "GLN", "GLU", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "CYS", "VAL", "ILE", "MET", "LEU", "PHE", "TYR", "TRP", "stop"]
 codons_per_aa = {"HIS": ['CAU', 'CAC'], "ARG": ['CGU', 'CGC', 'CGA', 'CGG', 'AGA', 'AGG'], "LYS": ['AAA', 'AAG'], "GLN": ['CAA', 'CAG'], "GLU": ['GAA', 'GAG'], "ASP": ['GAU', 'GAC'], "ASN": ['AAU', 'AAC'], "GLY": ['GGU', 'GGC', 'GGA', 'GGG'], "ALA": ['GCU', 'GCC', 'GCA', 'GCG'], "SER": ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'], "THR": ['ACU', 'ACC', 'ACA', 'ACG'], "PRO": ['CCU', 'CCC', 'CCA', 'CCG'], "CYS": ['UGU', 'UGC'], "VAL": ['GUU', 'GUC', 'GUA', 'GUG'], "ILE": ['AUU', 'AUC', 'AUA'], "MET": ['AUG'], "LEU": ['CUU', 'CUC', 'CUA', 'CUG', 'UUA', 'UUG'], "PHE": ['UUU', 'UUC'], "TYR": ['UAU', 'UAC'], "TRP": ['UGG'], "stop": ['UAA', 'UAG', 'UGA']}
+
 
 Higgs_amino_acid_order = ['PHE','LEU','ILE','MET','VAL','SER','PRO','THR','ALA','TYR','HIS','GLN','ASN','LYS','ASP','GLU','CYS','TRP','ARG','GLY']
 
 
 primordial_number_of_codons_per_aa = {"HIS": 1, "ARG": 1, "ASP": 1, "ASN": 1, "GLY": 1, "ALA": 1, "SER": 2, "THR": 1, "PRO": 1, "VAL": 1, "ILE": 1, "LEU": 2, "disregard": 2}
-primordial_amino_acids = ["HIS", "ARG", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "VAL", "ILE", "LEU"]
+primordial_amino_acids = ["HIS", "ARG", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "VAL", "ILE", "LEU", "disregard"]
 primordial_codons_per_aa = {"HIS": ['CA'], "ARG": ['CG'], "ASP": ['GA'], "ASN": ['AA'], "GLY": ['GG'], "ALA": ['GC'], "SER": ['UC', 'AG'], "THR": ['AC'], "PRO": ['CC'], "VAL": ['GU'], "ILE": ['AU'], "LEU": ['CU', 'UU'], "disregard": ['UA', 'UG']}
 primordial_codons = ['UU', 'UC', 'UA', 'UG', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG'] #UA and UG should be excluded
-primordial_codons_excl_stop = ['UU', 'UC', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG']
+primordial_codons_excl_stop = ['UU', 'UC', 'UA', 'UG', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG']
 
 
     #_______________________________________
@@ -281,48 +283,59 @@ def get_aa_for_codon(codon, codon_dict):
             return key
 
 #calculate the cost of a codon mutation
-def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, codons_without_stop, plot):
+def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, codons_without_stop, plot, mode):
     #get codon string name from it's index
     true_codon = codons_without_stop[true_codon_index]
     mutant_codon = codons_without_stop[mutant_codon_index]
     #get amino acid name from codon name
     true_aa = get_aa_for_codon(true_codon, codon_dict)
     mutant_aa = get_aa_for_codon(mutant_codon, codon_dict)
-    #get amino acid name from amino acid index
-    if model != "Higgs":
-        true_aa_index = amino_acids.index(true_aa)
-        mutant_aa_index = amino_acids.index(mutant_aa)
-    elif model == "Higgs":
-        true_aa_index = Higgs_amino_acid_order.index(true_aa)
-        mutant_aa_index = Higgs_amino_acid_order.index(mutant_aa)
-    elif model == "PAM250":
-        true_aa_index = PAM250.index(true_aa)
-        mutant_aa_index = PAM250.index(mutant_aa)
-        
-
-    aa_difference = 0
-    if model == "SeqPredNN":
-        aa_difference = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
-    elif model == "Koonin":
-        aa_difference = pow((polar_requirement_scale.get(true_aa) - polar_requirement_scale.get(mutant_aa)), 2)
-    elif model == "Higgs":
-        aa_difference = Higgs_distance_matrix[true_aa_index][mutant_aa_index]
-    elif model == "PAM250":
-        aa_difference = PAM250[true_aa_index][mutant_aa_index]
-    elif model == "neutral":
-        aa_difference = 1
-
-    codon_mutation_prob = get_codon_mutation_prob(true_codon, mutant_codon)
-    if codon_mutation_prob == '*':
-        cost = '*'
-    elif codon_mutation_prob == '-':
-        cost = '-'
-    elif model == "amino-acid":
-        cost = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
+    if true_aa == "stop" or true_aa == "disregard" or mutant_aa == "stop" or mutant_aa == "disregard":
+        cost = "-"
     else:
-        cost = float(codon_mutation_prob) * float(aa_difference)
-    if plot == True and isinstance(cost, str):
-        cost = -10
+        print("true codon index: " + str(true_codon_index))
+        print("true codon: " + str(true_codon))
+        print("true aa: " + str(true_aa))
+        print("mutant codon index: " + str(mutant_codon_index))
+        print("mutant codon: " + str(mutant_codon))
+        print("mutant aa: " + str(mutant_aa))
+        #get amino acid name from amino acid index
+        if model != "Higgs":
+            true_aa_index = amino_acids.index(true_aa)
+            mutant_aa_index = amino_acids.index(mutant_aa)
+        elif model == "Higgs":
+            true_aa_index = Higgs_amino_acid_order.index(true_aa)
+            mutant_aa_index = Higgs_amino_acid_order.index(mutant_aa)
+        elif model == "PAM250":
+            true_aa_index = PAM250.index(true_aa)
+            mutant_aa_index = PAM250.index(mutant_aa)
+        
+        print("true aa index: " + str(true_aa_index))
+        print("mutant aa index: " + str(mutant_aa_index))
+        
+        aa_difference = 0
+        if model == "SeqPredNN":
+            aa_difference = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
+        elif model == "Koonin":
+            aa_difference = pow((polar_requirement_scale.get(true_aa) - polar_requirement_scale.get(mutant_aa)), 2)
+        elif model == "Higgs":
+            aa_difference = Higgs_distance_matrix[true_aa_index][mutant_aa_index]
+        elif model == "PAM250":
+            aa_difference = PAM250[true_aa_index][mutant_aa_index]
+        elif model == "neutral":
+            aa_difference = 1
+
+        codon_mutation_prob = get_codon_mutation_prob(true_codon, mutant_codon)
+        if codon_mutation_prob == '*':
+            cost = '*'
+        elif codon_mutation_prob == '-':
+            cost = '-'
+        elif model == "amino-acid":
+            cost = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
+        else:
+            cost = float(codon_mutation_prob) * float(aa_difference)
+        if plot == True and isinstance(cost, str):
+            cost = -10
     
     return (cost)
 
@@ -389,12 +402,12 @@ def generate_sample_set(sample_size, sample_code_costs, sample_code_costs_NORM, 
         elif mode == "primordial":
             exclude = random_codon_assignments.get("disregard")
         #random codon assignment have been made, now calculate cost matrix and overall cost
-        for codon in exclude:
-            no_stop_codons.remove(codon)
+        # for codon in exclude:
+        #     no_stop_codons.remove(codon)
         
         for row in range(matrix_length):
             for cell in range(matrix_length):
-                temp_cost_matrix[row][cell] = get_cost(row, cell, model, random_codon_assignments, no_stop_codons, False)
+                temp_cost_matrix[row][cell] = get_cost(row, cell, model, random_codon_assignments, no_stop_codons, False, mode)
 
                 if not isinstance(temp_cost_matrix[row][cell], str):
                     matrix_min_max_check.append(temp_cost_matrix[row][cell])
@@ -520,9 +533,9 @@ def calculate_cost_matrix(codon_matrix, check, model, mode):
     for row in range(len(codon_matrix)):
         for cell in range(len(codon_matrix)):
             if mode == "standard":
-                codon_matrix[row][cell] = get_cost(row, cell, model, codons_per_aa, codons_excl_stop, False)
+                codon_matrix[row][cell] = get_cost(row, cell, model, codons_per_aa, codons_excl_stop, False, mode)
             elif mode == "primordial":
-                codon_matrix[row][cell] = get_cost(row, cell, model, primordial_codons_per_aa, primordial_codons_excl_stop, False)
+                codon_matrix[row][cell] = get_cost(row, cell, model, primordial_codons_per_aa, primordial_codons_excl_stop, False, mode)
 
             if not isinstance(codon_matrix[row][cell], str):
                 check.append(codon_matrix[row][cell])
@@ -565,8 +578,8 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename, t
     img = ax.imshow(plot_matrix, cmap=cmap, vmin=minimum, vmax=maximum)
 
     plt.title(title, pad=30)
-    ax.set_xticks(np.arange(61))
-    ax.set_yticks(np.arange(61))
+    ax.set_xticks(np.arange(64))
+    ax.set_yticks(np.arange(64))
     ax.set_xticklabels(codons_excl_stop, rotation = 90)
     ax.set_yticklabels(codons_excl_stop)
     ax.tick_params(labelsize=30, pad=14, length=14, width=3)
@@ -690,12 +703,12 @@ neutral_code_cost_NORM = get_code_cost(neutral_codon_matrix_NORM)
 amino_acid_code_cost_NORM = get_code_cost(amino_acid_codon_matrix_NORM)
 PAM250_code_cost_NORM = get_code_cost(PAM250_codon_matrix_NORM)
 
-generate_sample_set(10000, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(10000, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(10000, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(10000, neutral_sample_code_costs, neutral_sample_code_costs_NORM, neutral_code_cost, neutral_code_cost_NORM, "neutral", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(10000, amino_acid_sample_code_costs, amino_acid_sample_code_costs_NORM, amino_acid_code_cost, amino_acid_code_cost_NORM, "amino-acid", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
-generate_sample_set(10000, PAM250_sample_code_costs, PAM250_sample_code_costs_NORM, PAM250_code_cost, PAM250_code_cost_NORM, "PAM250", neutral_code_cost, neutral_code_cost_NORM, "standard", 61)
+generate_sample_set(100, SeqPredNN_sample_code_costs, SeqPredNN_sample_code_costs_NORM, SeqPredNN_code_cost, SeqPredNN_code_cost_NORM, "SeqPredNN", neutral_code_cost, neutral_code_cost_NORM, "standard", 64)
+generate_sample_set(100, Koonin_sample_code_costs, Koonin_sample_code_costs_NORM, Koonin_code_cost, Koonin_code_cost_NORM, "Koonin", neutral_code_cost, neutral_code_cost_NORM, "standard", 64)
+generate_sample_set(100, Higgs_sample_code_costs, Higgs_sample_code_costs_NORM, Higgs_code_cost, Higgs_code_cost_NORM, "Higgs", neutral_code_cost, neutral_code_cost_NORM, "standard", 64)
+generate_sample_set(100, neutral_sample_code_costs, neutral_sample_code_costs_NORM, neutral_code_cost, neutral_code_cost_NORM, "neutral", neutral_code_cost, neutral_code_cost_NORM, "standard", 64)
+generate_sample_set(100, amino_acid_sample_code_costs, amino_acid_sample_code_costs_NORM, amino_acid_code_cost, amino_acid_code_cost_NORM, "amino-acid", neutral_code_cost, neutral_code_cost_NORM, "standard", 64)
+generate_sample_set(100, PAM250_sample_code_costs, PAM250_sample_code_costs_NORM, PAM250_code_cost, PAM250_code_cost_NORM, "PAM250", neutral_code_cost, neutral_code_cost_NORM, "standard", 64)
 
 calculate_cost_matrix(SeqPredNN_primordial_codon_matrix, SeqPredNN_primordial_check, "SeqPredNN", "primordial")
 calculate_cost_matrix(Koonin_primordial_codon_matrix, Koonin_primordial_check, "Koonin", "primordial")
@@ -727,12 +740,12 @@ neutral_primordial_code_cost_NORM = get_code_cost(neutral_primordial_codon_matri
 amino_acid_primordial_code_cost_NORM = get_code_cost(amino_acid_primordial_codon_matrix_NORM)
 PAM250_primordial_code_cost_NORM = get_code_cost(PAM250_primordial_codon_matrix_NORM)
 
-generate_sample_set(10000, SeqPredNN_primordial_sample_code_costs, SeqPredNN_primordial_sample_code_costs_NORM, SeqPredNN_primordial_code_cost, SeqPredNN_primordial_code_cost_NORM, "SeqPredNN", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(10000, Koonin_primordial_sample_code_costs, Koonin_primordial_sample_code_costs_NORM, Koonin_primordial_code_cost, Koonin_primordial_code_cost_NORM, "Koonin", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(10000, Higgs_primordial_sample_code_costs, Higgs_primordial_sample_code_costs_NORM, Higgs_primordial_code_cost, Higgs_primordial_code_cost_NORM, "Higgs", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(10000, neutral_primordial_sample_code_costs, neutral_primordial_sample_code_costs_NORM, neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "neutral", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(10000, amino_acid_primordial_sample_code_costs, amino_acid_primordial_sample_code_costs_NORM, amino_acid_primordial_code_cost, amino_acid_primordial_code_cost_NORM, "amino-acid", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
-generate_sample_set(10000, PAM250_primordial_sample_code_costs, PAM250_primordial_sample_code_costs_NORM, PAM250_primordial_code_cost, PAM250_primordial_code_cost_NORM, "PAM250", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 14)
+generate_sample_set(100, SeqPredNN_primordial_sample_code_costs, SeqPredNN_primordial_sample_code_costs_NORM, SeqPredNN_primordial_code_cost, SeqPredNN_primordial_code_cost_NORM, "SeqPredNN", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
+generate_sample_set(100, Koonin_primordial_sample_code_costs, Koonin_primordial_sample_code_costs_NORM, Koonin_primordial_code_cost, Koonin_primordial_code_cost_NORM, "Koonin", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
+generate_sample_set(100, Higgs_primordial_sample_code_costs, Higgs_primordial_sample_code_costs_NORM, Higgs_primordial_code_cost, Higgs_primordial_code_cost_NORM, "Higgs", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
+generate_sample_set(100, neutral_primordial_sample_code_costs, neutral_primordial_sample_code_costs_NORM, neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "neutral", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
+generate_sample_set(100, amino_acid_primordial_sample_code_costs, amino_acid_primordial_sample_code_costs_NORM, amino_acid_primordial_code_cost, amino_acid_primordial_code_cost_NORM, "amino-acid", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
+generate_sample_set(100, PAM250_primordial_sample_code_costs, PAM250_primordial_sample_code_costs_NORM, PAM250_primordial_code_cost, PAM250_primordial_code_cost_NORM, "PAM250", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
 
 #generate .csv files
 store_cost_matrices("SeqPredNN_cost_matrix", SeqPredNN_codon_matrix)
