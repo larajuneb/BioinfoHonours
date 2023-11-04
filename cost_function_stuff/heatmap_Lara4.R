@@ -1,0 +1,184 @@
+library(tidyverse)
+library(hrbrthemes)
+library(plotly)
+library(viridis)
+
+
+df <- read_csv(
+  "raw_aa_costs/matrices/SeqPredNN_cost_matrix_NORM.csv"
+               )
+
+df
+
+df <- df %>%
+  mutate(
+    "Initial Codon"=`...1`,
+    .keep = "unused",
+    .before = 1
+  ) %>%
+  pivot_longer(
+    cols = !`Initial Codon`,
+    names_to = "Final Codon",
+    values_to = "Cost"
+  ) %>%
+  mutate(
+    Cost = as.double(
+      Cost
+      )
+    ) %>%
+  separate_wider_position(
+    cols = `Initial Codon`,
+    widths = c("Initial Position 1"=1, 
+               "Initial Position 2"= 1,
+               "Initial Position 3" =1
+               ),
+    cols_remove= FALSE
+  ) %>%
+  separate_wider_position(
+    cols = `Final Codon`,
+    widths = c("Final Position 1"=1, 
+               "Final Position 2"= 1,
+               "Final Position 3"=1
+    ),
+    cols_remove= FALSE
+  ) %>%
+  mutate("Position 1 Misread" = `Initial Position 1`!=`Final Position 1`,
+         "Position 2 Misread" = `Initial Position 2`!=`Final Position 2`,
+         "Position 3 Misread" = `Initial Position 3`!=`Final Position 3`
+         ) %>%
+  mutate("Misread Count" = `Position 1 Misread`+`Position 2 Misread`+`Position 3 Misread`
+         ) %>%
+  filter(`Misread Count`<2) %>%
+
+  mutate(
+    Position = case_when(
+      `Initial Position 1`!=`Final Position 1` ~ 1,
+      `Initial Position 2`!=`Final Position 2` ~ 2,
+      `Initial Position 3`!=`Final Position 3` ~ 3,
+      ),
+    .before = 1
+    ) 
+
+no_misreads <- df %>% filter(`Misread Count`==0) 
+
+no_misreads_1 <- no_misreads %>% 
+  mutate(
+    Position=1
+    )
+
+no_misreads_2 <- no_misreads %>% 
+  mutate(
+    Position=2
+  )
+
+no_misreads_3 <- no_misreads %>% 
+  mutate(
+    Position=3
+  )
+
+df <- df %>% 
+  bind_rows(
+    no_misreads_1
+    )  %>% 
+  bind_rows(
+    no_misreads_2
+  )  %>% 
+  bind_rows(
+    no_misreads_3
+  ) %>%
+  filter(
+    !is.na(
+      Position
+      )
+    ) %>%
+  mutate(
+    "Initial" = paste(
+      "Initial Position", 
+      Position
+      ),
+    "Final" = paste(
+      "Final Position", 
+      Position
+      ),
+    .before = 1
+    ) %>%
+  rowwise(
+    ) %>%
+  mutate(
+    "Initial" = get(
+      Initial),
+    "Final" = get(
+      Final
+      )
+    ) %>%
+  ungroup(
+    ) %>% 
+  mutate(
+    `Initial Position 1` = factor(
+      `Initial Position 1`,
+      levels=c(
+        "U", "G", "C", "A"
+        )
+      )
+    ) %>%
+  mutate("Stop Final"=
+           case_when(
+             `Final Codon` == "UGA" ~ TRUE,
+             `Final Codon` == "UAG" ~ TRUE,
+             `Final Codon` == "UAA" ~ TRUE,
+             .default = FALSE
+             )
+         )
+
+  
+
+plot <- df %>%
+  ggplot(
+    aes(
+      x = Final,
+      y = `Initial Codon`,
+      fill = Cost,
+      )
+    ) +
+  geom_raster(
+    )+
+  #geom_point(
+  #  aes(
+  #    shape = `Stop Final`
+  #  ),
+  #  colour = "black",
+  #  fill = "red"
+  #)+
+
+  
+  theme_ipsum(
+    
+  )+
+  scale_fill_viridis(
+    )+
+  scale_shape_manual(values = c("TRUE" = 21, "FALSE" = NA), na.value = NA)+
+  scale_x_discrete(
+    limits=c(
+      "U", "G", "C", "A"
+      )
+    )+
+
+  facet_grid(
+    rows= vars(`Initial Position 1`),
+    cols = vars(`Position`),
+    scales = "free_y"
+    ) +
+  
+  labs(
+    x = "Misread Nucleotide",
+    y= "Initial Codon"
+    ) +
+  guides(
+    shape = guide_legend("Misread to Stop Codon?"),
+    fill = guide_legend("Score")
+  )
+
+plot
+
+
+
