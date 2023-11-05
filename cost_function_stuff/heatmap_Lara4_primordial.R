@@ -5,7 +5,7 @@ library(viridis)
 
 
 df <- read_csv(
-  "raw_aa_costs/matrices/primordial/SeqPredNN_primordial_cost_matrix_NORM.csv"
+  "raw_aa_costs/matrices/primordial/Amino_acid_primordial_codon_matrix.csv"
 )
 
 df

@@ -322,8 +322,9 @@ def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, codons_wit
         elif model == "amino-acid":
             cost = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
         else:
-            # cost = float(codon_mutation_prob) * float(aa_difference)
-            cost = float(aa_difference)
+            cost = float(codon_mutation_prob) * float(aa_difference)
+            #comment out line above and uncomment line below to generate only amino acid differences, not cost
+            # cost = float(aa_difference)
         if plot == True and isinstance(cost, str):
             cost = -10
     
@@ -766,7 +767,6 @@ store_cost_matrices("primordial/Amino_acid_primordial_codon_matrix_NORM", amino_
 store_cost_matrices("primordial/Amino_primordial_acid_codon_matrix_NORM", amino_acid_primordial_codon_matrix_NORM)
 store_cost_matrices("primordial/PAM250_primordial_codon_matrix", PAM250_primordial_codon_matrix)
 store_cost_matrices("primordial/PAM250_primordial_codon_matrix_NORM", PAM250_primordial_codon_matrix_NORM)
-
 
 #generate stats and store in csvs
 stats()
