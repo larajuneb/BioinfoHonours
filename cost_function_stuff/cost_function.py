@@ -162,21 +162,19 @@ Higgs_amino_acid_order = ['PHE','LEU','ILE','MET','VAL','SER','PRO','THR','ALA',
 
 primordial_number_of_codons_per_aa = {"HIS": 1, "ARG": 1, "ASP": 1, "ASN": 1, "GLY": 1, "ALA": 1, "SER": 2, "THR": 1, "PRO": 1, "VAL": 1, "ILE": 1, "LEU": 2, "disregard": 2}
 primordial_amino_acids = ["HIS", "ARG", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "VAL", "ILE", "LEU", "disregard"]
-primordial_codons_per_aa = {"HIS": ['CA'], "ARG": ['CG'], "ASP": ['GA'], "ASN": ['AA'], "GLY": ['GG'], "ALA": ['GC'], "SER": ['UC', 'AG'], "THR": ['AC'], "PRO": ['CC'], "VAL": ['GU'], "ILE": ['AU'], "LEU": ['CU', 'UU'], "disregard": ['UA', 'UG']}
-primordial_codons = ['UU', 'UC', 'UA', 'UG', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG'] #UA and UG should be excluded
+primordial_codons_per_aa = {"HIS": ['CA'], "ARG": ['CG'], "ASP": ['GA'], "ASN": ['AA'], "GLY": ['GG'], "ALA": ['AC'], "SER": ['GC', 'AG'], "THR": ['CC'], "PRO": ['UC'], "VAL": ['GU'], "ILE": ['UU'], "LEU": ['CU', 'AU'], "disregard": ['UA', 'UG']}
 primordial_codons_excl_stop = ['UU', 'UC', 'UA', 'UG', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG']
-
 
     #_______________________________________
     #       |   U   |   C   |   A   |   G   |
     #-------|-------|-------|-------|-------|
-    #   U   |  Leu  |  Ser  |   *   |   *   |
+    #   U   |  Ile  |  Pro  |   *   |   *   |
     #-------|-------|-------|-------|-------|
-    #   C   |  Leu  |  Pro  |  His  |  Arg  |
+    #   C   |  Leu  |  Thr  |  His  |  Arg  |
     #-------|-------|-------|-------|-------|
-    #   A   |  Ile  |  Thr  |  Asn  |  Ser  |
+    #   A   |  Leu  |  Ala  |  Asn  |  Ser  |
     #-------|-------|-------|-------|-------|
-    #   G   |  Val  |  Ala  |  Asp  |  Gly  |
+    #   G   |  Val  |  Ser  |  Asp  |  Gly  |
     #_______|_______|_______|_______|_______|
 
 
@@ -741,7 +739,7 @@ generate_sample_set(10000, neutral_primordial_sample_code_costs, neutral_primord
 generate_sample_set(10000, amino_acid_primordial_sample_code_costs, amino_acid_primordial_sample_code_costs_NORM, amino_acid_primordial_code_cost, amino_acid_primordial_code_cost_NORM, "amino-acid", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
 generate_sample_set(10000, PAM250_primordial_sample_code_costs, PAM250_primordial_sample_code_costs_NORM, PAM250_primordial_code_cost, PAM250_primordial_code_cost_NORM, "PAM250", neutral_primordial_code_cost, neutral_primordial_code_cost_NORM, "primordial", 16)
 
-#generate .csv files
+# #generate .csv files
 store_cost_matrices("SeqPredNN_cost_matrix", SeqPredNN_codon_matrix)
 store_cost_matrices("SeqPredNN_cost_matrix_NORM", SeqPredNN_codon_matrix_NORM)
 store_cost_matrices("Koonin_cost_matrix", Koonin_codon_matrix)
