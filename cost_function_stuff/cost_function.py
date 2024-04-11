@@ -19,18 +19,19 @@ import sklearn.metrics as metrics
 import sys
 
 #TODO:
-# introduce random seed when sampling
-# move current files to safe folder
 # run and test
+# add code to make output directories if htey don't already exist
+# add javadoc comments
+# edit git repository
 
-# python3 cost_function.py <sample size> <standard/primordial> <path to SeqPredNN normalised substitution matrix> <path to Higgs matrix> <path to PAM250 matrix>
+# python3 cost_function.py <sample size> <standard/primordial> <path to SeqPredNN normalised substitution matrix> <path to Higgs matrix> <path to PAM250 matrix> <path to output directory>
 
 csv_paths = []
 for arg in sys.argv:
     csv_paths.append(arg)
 csv_paths.pop(0) #remove "cost_function.py" from list
 
-sample_size = csv_paths[0]
+sample_size = int(csv_paths[0])
 mode = csv_paths[1]
 
 #generate SeqPredNN normalised substitution matrix list from .csv ("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_normalised_matrix.csv")
@@ -44,6 +45,8 @@ Higgs_distance_matrix.remove(Higgs_distance_matrix[0])
 # read PAM250 matrix from file ("pam250.csv")
 PAM250 = list(csv.reader(open(csv_paths[4])))
 PAM250.remove(PAM250[0])
+
+output_dir = csv_paths[5]
 
 for row in range(len(normalised_substitution_matrix)):
     normalised_substitution_matrix[row].remove(normalised_substitution_matrix[row][0])
@@ -400,7 +403,7 @@ def sample_set_stats(costs, norm_costs, model):
     series = pd.Series(costs)
     series_norm = pd.Series(norm_costs)
 
-    filename = "stats/" + model + "_code_cost_samples_stats.csv"
+    filename = output_dir + "/stats/" + model + "_code_cost_samples_stats.csv"
     with open(filename, mode="w") as file:
         file.write("model, count, mean, std, min, 25%, 50%, 75%, max\n")
 
@@ -464,15 +467,15 @@ def plot_samples(sample_size, costs, model, normalised, code_cost, neutral_cost)
     plt.xlabel("Code cost")
     plt.ylabel("Number of occurrences")
     plt.title(title)
-    plt.savefig("plots/histograms/" + f'{filename}.png')
-    plt.savefig("plots/histograms/" + f'{filename}.svg', format="svg")
+    plt.savefig(output_dir + "/plots/histograms/" + f'{filename}.png')
+    plt.savefig(output_dir + "/plots/histograms/" + f'{filename}.svg', format="svg")
     plt.close()
 
     return 0
 
 #make csv files of all matrices
 def store_cost_matrices(mode, model, matrix):
-    filename = "matrices/" + mode + "/" + model + "_cost_matrix.csv"
+    filename = output_dir + "/matrices/" + mode + "/" + model + "_cost_matrix.csv"
     if "primordial" in mode:
         codon_set = primordial_codons_excl_stop
     else:
@@ -556,12 +559,12 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename, t
     cbar = fig.colorbar(img, ax=ax, pad=0.01)
     cbar.ax.tick_params(labelsize=63, pad=14, length=14, width=3)
     fig.tight_layout()
-    plt.savefig("plots/" + f'{filename}.png')
+    plt.savefig(output_dir + "/plots/" + f'{filename}.png')
     plt.close()
 
 def spearmans_rank_correlation_tests():
 
-    filename = "stats/Spearmans_rank_correlation_tests.csv"
+    filename = output_dir + "/stats/Spearmans_rank_correlation_tests.csv"
     with open(filename, mode="w") as file:
         file.write("code cost test, Null hypothesis, Alternative hypothesis, correlation, p-value\n")
 
@@ -579,7 +582,7 @@ def spearmans_rank_correlation_tests():
 
 #generate stats and store in csvs
 def stats():
-    filename = "stats/" + mode + "/code_cost_stats.csv"
+    filename = output_dir + "/stats/" + mode + "/code_cost_stats.csv"
     with open(filename, mode="w") as file:
         file.write(" , raw code cost, mean, min, max, NORM code cost, mean NORM, min NORM, max NORM\n")
 
@@ -594,7 +597,7 @@ def stats():
 
         file.write("Amino acid," + str(amino_acid_code_cost) + "," + str(mean(amino_acid_check)) + "," + str(min(amino_acid_check)) + "," + str(max(amino_acid_check)) + "," + str(amino_acid_code_cost_NORM) + "," + str(mean(amino_acid_check_NORM)) + "," + str(min(amino_acid_check_NORM)) + "," + str(max(amino_acid_check_NORM)) + "\n")
 
-    filename = "stats/Kolmogorov_Smirnov_tests.csv"
+    filename = output_dir + "/stats/Kolmogorov_Smirnov_tests.csv"
     with open(filename, mode="w") as file:
         file.write("sample code costs test, statistic, p-value\n")
 
