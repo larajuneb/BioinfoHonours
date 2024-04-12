@@ -5,7 +5,7 @@ library(viridis)
 
 
 df <- read_csv(
-  "raw_aa_costs/matrices/SeqPredNN_cost_matrix_NORM.csv"
+  "matrices/inverted_PAM250/PAM250_codon_matrix_NORM.csv"
                )
 
 df
@@ -180,5 +180,6 @@ plot <- df %>%
 
 plot
 
+ggsave("svg_heatmaps/standard/PAM250_NORM.svg",plot)
 
 
