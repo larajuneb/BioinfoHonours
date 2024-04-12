@@ -17,10 +17,10 @@ from scipy.stats import spearmanr
 from scipy.stats import ks_2samp
 import sklearn.metrics as metrics
 import sys
+import os
 
 #TODO:
 # run and test
-# add code to make output directories if htey don't already exist
 # add javadoc comments
 # edit git repository
 
@@ -47,6 +47,27 @@ PAM250 = list(csv.reader(open(csv_paths[4])))
 PAM250.remove(PAM250[0])
 
 output_dir = csv_paths[5]
+
+if not os.path.exists(output_dir): #check for output folder
+    os.mkdir(output_dir)
+
+if not os.path.exists(output_dir + "/matrices"): #check for matrices folder
+    os.mkdir(output_dir + "/matrices")
+
+if not os.path.exists(output_dir + "/matrices/" + csv_paths[1]): #check for standard/primordial folder within matrices folder
+    os.mkdir(output_dir + "/matrices/" + csv_paths[1])
+
+if not os.path.exists(output_dir + "/plots"): #check for plots folder
+    os.mkdir(output_dir + "/plots")
+
+if not os.path.exists(output_dir + "/plots/histograms"): #check for histograms folder within plots folder
+    os.mkdir(output_dir + "/plots/histograms")
+
+if not os.path.exists(output_dir + "/stats"): #check for stats folder
+    os.mkdir(output_dir + "/stats")
+
+if not os.path.exists(output_dir + "/stats/" + csv_paths[1]): #check for standard/primordial folder within stats folder
+    os.mkdir(output_dir + "/stats/" + csv_paths[1])
 
 for row in range(len(normalised_substitution_matrix)):
     normalised_substitution_matrix[row].remove(normalised_substitution_matrix[row][0])
