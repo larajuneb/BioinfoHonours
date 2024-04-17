@@ -13,7 +13,6 @@ import sys
 import os
 
 #TODO:
-# check outputs to see if they are correct
 # add javadoc comments
 # clean up git repository
 # make README
@@ -33,8 +32,8 @@ elif mode == "primordial":
     dimension = 16
 
 #generate SeqPredNN normalised substitution matrix list from .csv ("/home/larajuneb/Honours/PROJECT_(721)/Coding/BioinfoHonours/oversampled_normalised_matrix.csv")
-normalised_substitution_matrix = list(csv.reader(open(csv_paths[2])))
-normalised_substitution_matrix.remove(normalised_substitution_matrix[0])
+SeqPredNN_norm_substitution_matrix = list(csv.reader(open(csv_paths[2])))
+SeqPredNN_norm_substitution_matrix.remove(SeqPredNN_norm_substitution_matrix[0])
 
 # read Higgs matrix from file ("Higgs_aa_distance_matrix.csv")
 Higgs_distance_matrix = list(csv.reader(open(csv_paths[3])))
@@ -67,12 +66,24 @@ if not os.path.exists(output_dir + "/stats"): #check for stats folder
 if not os.path.exists(output_dir + "/stats/" + csv_paths[1]): #check for standard/primordial folder within stats folder
     os.mkdir(output_dir + "/stats/" + csv_paths[1])
 
-for row in range(len(normalised_substitution_matrix)):
-    normalised_substitution_matrix[row].remove(normalised_substitution_matrix[row][0])
+for row in range(len(SeqPredNN_norm_substitution_matrix)):
+    SeqPredNN_norm_substitution_matrix[row].remove(SeqPredNN_norm_substitution_matrix[row][0])
 
 for row in range(len(Higgs_distance_matrix)):
     Higgs_distance_matrix[row].remove(Higgs_distance_matrix[row][0])
     PAM250[row].remove(PAM250[row][0])
+
+def regenerate_codon_matrix(array):
+    array.clear()
+    for first in nucleotides:
+        for second in nucleotides:
+            if mode == "standard":
+                for third in nucleotides:
+                    codon = first + second + third
+                    array.append(codon)
+            elif mode == "primordial":
+                codon = first + second
+                array.append(codon)
 
 #SeqPredNN codon matrix
 SeqPredNN_codon_matrix = [[0 for x in range(dimension)] for y in range(dimension)]
@@ -98,7 +109,7 @@ Higgs_check_NORM = []
 Higgs_sample_code_costs = []
 Higgs_sample_code_costs_NORM = []
 
-#neutral
+#neutral substitutions values
 neutral_codon_matrix = [[0 for x in range(dimension)] for y in range(dimension)]
 neutral_codon_matrix_NORM = [[0 for x in range(dimension)] for y in range(dimension)]
 neutral_check = []
@@ -114,7 +125,7 @@ amino_acid_check_NORM = []
 amino_acid_sample_code_costs = []
 amino_acid_sample_code_costs_NORM = []
 
-#PAM250
+#PAM250 substitutions
 PAM250_codon_matrix = [[0 for x in range(dimension)] for y in range(dimension)]
 PAM250_codon_matrix_NORM = [[0 for x in range(dimension)] for y in range(dimension)]
 PAM250_check = []
@@ -123,35 +134,26 @@ PAM250_sample_code_costs = []
 PAM250_sample_code_costs_NORM = []
 
 nucleotides = ['U', 'C', 'A', 'G']
-codons = []
-codons_excl_stop = []
-codons_leftover = []
+codon_set = []
 codon = ""
-stop = ['UAA', 'UAG', 'UGA']
-disregard = ['UA', 'UG']
+stop = ['UAA', 'UAG', 'UGA'] #stop codons in standard codon table
+disregard = ['UA', 'UG'] #codons to disregard in proposed primordial codon table
 
 #generate all codons
-for first in nucleotides:
-    for second in nucleotides:
-        for third in nucleotides:
-            codon = first + second + third
-            codons.append(codon)
-            codons_leftover.append(codon)
-            codons_excl_stop.append(codon)
-            # if codon not in stop:
-            #     codons_excl_stop.append(codon)
+regenerate_codon_matrix(codon_set)
 
-number_of_codons_per_aa = {"HIS": 2, "ARG": 6, "LYS": 2, "GLN": 2, "GLU": 2, "ASP": 2, "ASN": 2, "GLY": 4, "ALA": 4, "SER": 6, "THR": 4, "PRO": 4, "CYS": 2, "VAL": 4, "ILE": 3, "MET": 1, "LEU": 6, "PHE": 2, "TYR": 2, "TRP": 1, "stop": 3}
-amino_acids = ["HIS", "ARG", "LYS", "GLN", "GLU", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "CYS", "VAL", "ILE", "MET", "LEU", "PHE", "TYR", "TRP", "stop"]
-codons_per_aa = {"HIS": ['CAU', 'CAC'], "ARG": ['CGU', 'CGC', 'CGA', 'CGG', 'AGA', 'AGG'], "LYS": ['AAA', 'AAG'], "GLN": ['CAA', 'CAG'], "GLU": ['GAA', 'GAG'], "ASP": ['GAU', 'GAC'], "ASN": ['AAU', 'AAC'], "GLY": ['GGU', 'GGC', 'GGA', 'GGG'], "ALA": ['GCU', 'GCC', 'GCA', 'GCG'], "SER": ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'], "THR": ['ACU', 'ACC', 'ACA', 'ACG'], "PRO": ['CCU', 'CCC', 'CCA', 'CCG'], "CYS": ['UGU', 'UGC'], "VAL": ['GUU', 'GUC', 'GUA', 'GUG'], "ILE": ['AUU', 'AUC', 'AUA'], "MET": ['AUG'], "LEU": ['CUU', 'CUC', 'CUA', 'CUG', 'UUA', 'UUG'], "PHE": ['UUU', 'UUC'], "TYR": ['UAU', 'UAC'], "TRP": ['UGG'], "stop": ['UAA', 'UAG', 'UGA']}
+if mode == "standard":
+    number_of_codons_per_aa = {"HIS": 2, "ARG": 6, "LYS": 2, "GLN": 2, "GLU": 2, "ASP": 2, "ASN": 2, "GLY": 4, "ALA": 4, "SER": 6, "THR": 4, "PRO": 4, "CYS": 2, "VAL": 4, "ILE": 3, "MET": 1, "LEU": 6, "PHE": 2, "TYR": 2, "TRP": 1, "stop": 3}
+    amino_acids = ["HIS", "ARG", "LYS", "GLN", "GLU", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "CYS", "VAL", "ILE", "MET", "LEU", "PHE", "TYR", "TRP", "stop"]
+    codons_per_aa = {"HIS": ['CAU', 'CAC'], "ARG": ['CGU', 'CGC', 'CGA', 'CGG', 'AGA', 'AGG'], "LYS": ['AAA', 'AAG'], "GLN": ['CAA', 'CAG'], "GLU": ['GAA', 'GAG'], "ASP": ['GAU', 'GAC'], "ASN": ['AAU', 'AAC'], "GLY": ['GGU', 'GGC', 'GGA', 'GGG'], "ALA": ['GCU', 'GCC', 'GCA', 'GCG'], "SER": ['UCU', 'UCC', 'UCA', 'UCG', 'AGU', 'AGC'], "THR": ['ACU', 'ACC', 'ACA', 'ACG'], "PRO": ['CCU', 'CCC', 'CCA', 'CCG'], "CYS": ['UGU', 'UGC'], "VAL": ['GUU', 'GUC', 'GUA', 'GUG'], "ILE": ['AUU', 'AUC', 'AUA'], "MET": ['AUG'], "LEU": ['CUU', 'CUC', 'CUA', 'CUG', 'UUA', 'UUG'], "PHE": ['UUU', 'UUC'], "TYR": ['UAU', 'UAC'], "TRP": ['UGG'], "stop": ['UAA', 'UAG', 'UGA']}
+elif mode == "primordial":
+    number_of_codons_per_aa = {"HIS": 1, "ARG": 1, "ASP": 1, "ASN": 1, "GLY": 1, "ALA": 1, "SER": 2, "THR": 1, "PRO": 1, "VAL": 1, "ILE": 1, "LEU": 2, "disregard": 2}
+    amino_acids = ["HIS", "ARG", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "VAL", "ILE", "LEU", "disregard"]
+    codons_per_aa = {"HIS": ['CA'], "ARG": ['CG'], "ASP": ['GA'], "ASN": ['AA'], "GLY": ['GG'], "ALA": ['AC'], "SER": ['GC', 'AG'], "THR": ['CC'], "PRO": ['UC'], "VAL": ['GU'], "ILE": ['UU'], "LEU": ['CU', 'AU'], "disregard": ['UA', 'UG']}
 
 Higgs_amino_acid_order = ['PHE','LEU','ILE','MET','VAL','SER','PRO','THR','ALA','TYR','HIS','GLN','ASN','LYS','ASP','GLU','CYS','TRP','ARG','GLY']
 
-primordial_number_of_codons_per_aa = {"HIS": 1, "ARG": 1, "ASP": 1, "ASN": 1, "GLY": 1, "ALA": 1, "SER": 2, "THR": 1, "PRO": 1, "VAL": 1, "ILE": 1, "LEU": 2, "disregard": 2}
-primordial_amino_acids = ["HIS", "ARG", "ASP", "ASN", "GLY", "ALA", "SER", "THR", "PRO", "VAL", "ILE", "LEU", "disregard"]
-primordial_codons_per_aa = {"HIS": ['CA'], "ARG": ['CG'], "ASP": ['GA'], "ASN": ['AA'], "GLY": ['GG'], "ALA": ['AC'], "SER": ['GC', 'AG'], "THR": ['CC'], "PRO": ['UC'], "VAL": ['GU'], "ILE": ['UU'], "LEU": ['CU', 'AU'], "disregard": ['UA', 'UG']}
-primordial_codons_excl_stop = ['UU', 'UC', 'UA', 'UG', 'CU', 'CC', 'CA', 'CG', 'AU', 'AC', 'AA', 'AG', 'GU', 'GC', 'GA', 'GG']
-
+# PRIMORDIAL CODON TABLE:
     #_______________________________________
     #       |   U   |   C   |   A   |   G   |
     #-------|-------|-------|-------|-------|
@@ -190,13 +192,12 @@ def tv_or_ts(true, mutant):
 
 #calculate N constant for Freeland and Hurst weights
 def calculate_N():
-    #DAMN I FORGOT TO EXCLUDE STOP CODONS
-    for true_codon in codons:
+    for true_codon in codon_set:
         sum_for_N = 0
         first = 0
         second = 0
         third = 0
-        for mutant_codon in codons:
+        for mutant_codon in codon_set:
             if true_codon != mutant_codon:
                 sum_of_diffs = 0
                 first = 0
@@ -266,15 +267,16 @@ def get_aa_for_codon(codon, codon_dict):
             return key
 
 #calculate the cost of a codon mutation
-def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, codons_without_stop, plot):
+def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, plot):
     #get codon string name from it's index
-    true_codon = codons_without_stop[true_codon_index]
-    mutant_codon = codons_without_stop[mutant_codon_index]
+    true_codon = codon_set[true_codon_index]
+    mutant_codon = codon_set[mutant_codon_index]
     #get amino acid name from codon name
     true_aa = get_aa_for_codon(true_codon, codon_dict)
     mutant_aa = get_aa_for_codon(mutant_codon, codon_dict)
+
     if true_aa == "stop" or true_aa == "disregard" or mutant_aa == "stop" or mutant_aa == "disregard":
-        cost = "-"
+        cost = "-" #cost is disregarded if the mutation if to or from a stop or disregarded codon
     else:
         #get amino acid name from amino acid index
         if model != "Higgs":
@@ -289,7 +291,7 @@ def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, codons_wit
         
         aa_difference = 0
         if model == "SeqPredNN":
-            aa_difference = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
+            aa_difference = 1 - float(SeqPredNN_norm_substitution_matrix[true_aa_index][mutant_aa_index])
         elif model == "Koonin":
             aa_difference = pow((polar_requirement_scale.get(true_aa) - polar_requirement_scale.get(mutant_aa)), 2)
         elif model == "Higgs":
@@ -306,17 +308,15 @@ def get_cost(true_codon_index, mutant_codon_index, model, codon_dict, codons_wit
         elif codon_mutation_prob == '-':
             cost = '-'
         elif model == "amino-acid":
-            cost = 1 - float(normalised_substitution_matrix[true_aa_index][mutant_aa_index])
+            cost = 1 - float(SeqPredNN_norm_substitution_matrix[true_aa_index][mutant_aa_index])
         else:
             cost = float(codon_mutation_prob) * float(aa_difference)
-            #comment out line above and uncomment line below to generate only amino acid differences, not cost
-            # cost = float(aa_difference)
         if plot == True and isinstance(cost, str):
             cost = -10
     
     return (cost)
 
-#normalise the cost value to be between 0 and 100
+#normalise the cost value to be between 0 and 100 based on min and max cost 
 def normalise_cost(min, max, value):
     if max - min == 0:
         z = 0
@@ -333,35 +333,12 @@ def get_code_cost(cost_array):
                 code_cost += cost_array[row][cell]
     return code_cost
 
-def regenerate_codon_matrix(array):
-    for first in nucleotides:
-        for second in nucleotides:
-            if mode == "standard":
-                for third in nucleotides:
-                    codon = first + second + third
-                    array.append(codon)
-            elif mode == "primordial":
-                codon = first + second
-                array.append(codon)
-    return(array)
-
-#check if a list of costs in normally distributed using the Kolmogorov-Smirnov Test
-def is_it_gaussian(dataset):
-    kstest(dataset, 'norm')
-    return 0
-
-#generate 10,000 random assignments of codons and calculate costs for each
+#generate n (sample size) random assignments of codons to amino acids and calculate costs for each structure of the genetic code
 def generate_sample_set(sample_size, sample_code_costs, sample_code_costs_NORM, mode_code_cost, mode_code_cost_NORM, model, neutral_cost, neutral_cost_NORM, matrix_length):
     random_codon_assignments = {} #similar to codons_per_aa dict, but instead of true codon assignments, the codons are assigned randomly to amino acids
     leftover = []
-    exclude = []
     code_costs = []
     norm_code_costs = []
-    no_stop_codons = []
-    if mode == "standard":
-        number_of_codons_per_aa_SAMPLE = number_of_codons_per_aa
-    elif mode == "primordial":
-        number_of_codons_per_aa_SAMPLE = primordial_number_of_codons_per_aa
 
     for i in range(sample_size):
         temp_cost_matrix = [[0 for x in range(matrix_length)] for y in range(matrix_length)]
@@ -369,27 +346,19 @@ def generate_sample_set(sample_size, sample_code_costs, sample_code_costs_NORM, 
         matrix_min_max_check = []
         minimum = 0
         maximum = 0
-        leftover = regenerate_codon_matrix(leftover)
-        no_stop_codons = regenerate_codon_matrix(no_stop_codons)
-        for key, value in number_of_codons_per_aa_SAMPLE.items():
+        regenerate_codon_matrix(leftover)
+        for key, value in number_of_codons_per_aa.items():
             random_codon_assignments[key] = [] #a new random codon assignment for each sample, key = amino acid, value = array of codons
-            for i in range(number_of_codons_per_aa_SAMPLE[key]): #loop through as many times as there are codons for that amino acid
-                codon = random.choice(leftover) #choose a random codon for the amino acid 
+            for i in range(number_of_codons_per_aa[key]): #loop through as many times as there are codons for that amino acid
+                codon = random.choice(leftover) #choose a random codon for the amino acid/"stop" signal/disregarded codon
                 leftover.remove(codon) #remove that codon from the list of available codons
-                random_codon_assignments[key].append(codon) #add the randomly chose codon to the list of codons for that amino acid
-        if mode == "standard":
-            exclude = random_codon_assignments.get("stop")
-        elif mode == "primordial":
-            exclude = random_codon_assignments.get("disregard")
-        #random codon assignment have been made, now calculate cost matrix and overall cost
-        # for codon in exclude:
-        #     no_stop_codons.remove(codon)
+                random_codon_assignments[key].append(codon) #add the randomly chosen codon to the list of codons for that amino acid
         
         for row in range(matrix_length):
             for cell in range(matrix_length):
-                temp_cost_matrix[row][cell] = get_cost(row, cell, model, random_codon_assignments, no_stop_codons, False)
+                temp_cost_matrix[row][cell] = get_cost(row, cell, model, random_codon_assignments, False)
 
-                if not isinstance(temp_cost_matrix[row][cell], str):
+                if not isinstance(temp_cost_matrix[row][cell], str): #add costs for array to check for min and max (excludes "-" for stop/disregarded codons)
                     matrix_min_max_check.append(temp_cost_matrix[row][cell])
         #get code cost for raw data matrix
         minimum = min(matrix_min_max_check)
@@ -405,8 +374,6 @@ def generate_sample_set(sample_size, sample_code_costs, sample_code_costs_NORM, 
         sample_code_costs_NORM.append(get_code_cost(norm_cost_matrix))
 
         random_codon_assignments.clear() #clear random codon assignment for next sample
-        no_stop_codons.clear()
-        stop.clear()
         temp_cost_matrix = [[0 for x in range(matrix_length)] for y in range(matrix_length)]
         norm_cost_matrix = [[0 for x in range(matrix_length)] for y in range(matrix_length)]
         
@@ -495,10 +462,6 @@ def plot_samples(sample_size, costs, model, normalised, code_cost, neutral_cost)
 #make csv files of all matrices
 def store_cost_matrices(mode, model, matrix):
     filename = output_dir + "/matrices/" + mode + "/" + model + "_cost_matrix.csv"
-    if "primordial" in mode:
-        codon_set = primordial_codons_excl_stop
-    else:
-        codon_set = codons_excl_stop
     codon_string = " ," + ",".join(codon_set) + "\n"
     with open(filename, mode="w") as file:
         file.write(codon_string) #first line
@@ -511,10 +474,7 @@ def store_cost_matrices(mode, model, matrix):
 def calculate_cost_matrix(codon_matrix, check, model):
     for row in range(len(codon_matrix)):
         for cell in range(len(codon_matrix)):
-            if mode == "standard":
-                codon_matrix[row][cell] = get_cost(row, cell, model, codons_per_aa, codons_excl_stop, False)
-            elif mode == "primordial":
-                codon_matrix[row][cell] = get_cost(row, cell, model, primordial_codons_per_aa, primordial_codons_excl_stop, False)
+            codon_matrix[row][cell] = get_cost(row, cell, model, codons_per_aa, False)
 
             if not isinstance(codon_matrix[row][cell], str):
                 check.append(codon_matrix[row][cell])
@@ -526,11 +486,9 @@ def normalise_matrix(minimum, maximum, original_matrix, norm_check):
         for cell in range(len(original_matrix)):
             if not isinstance(original_matrix[row][cell], str):
                 normalised[row][cell] = normalise_cost(minimum, maximum, original_matrix[row][cell])
-                # plot_matrix[row][cell] = normalise_cost(minimum, maximum, original_matrix[row][cell])
                 norm_check.append(normalised[row][cell])
             if isinstance(original_matrix[row][cell], str):
                 normalised[row][cell] = original_matrix[row][cell]
-                # plot_matrix[row][cell] = -10
 
     return(normalised)
 
@@ -546,6 +504,7 @@ def normalise_matrix_SAMPLES(minimum, maximum, original_matrix):
 
     return(normalised)
 
+# unused
 def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename, title):
 
     fig, ax = plt.subplots(figsize=(45, 38))
@@ -559,8 +518,8 @@ def confusion_matrix(plot_matrix, original_matrix, minimum, maximum, filename, t
     plt.title(title, pad=30)
     ax.set_xticks(np.arange(dimension))
     ax.set_yticks(np.arange(dimension))
-    ax.set_xticklabels(codons_excl_stop, rotation = 90)
-    ax.set_yticklabels(codons_excl_stop)
+    ax.set_xticklabels(codon_set, rotation = 90)
+    ax.set_yticklabels(codon_set)
     ax.tick_params(labelsize=30, pad=14, length=14, width=3)
     ax.tick_params(bottom=False, top=True, left=True, right=False)
     ax.tick_params(labelbottom=False, labeltop=True, labelleft=True, labelright=False)
@@ -639,7 +598,6 @@ def stats():
     spearmans_rank_correlation_tests()
 
 #run calculations for SeqPredNN, Koonin, Higgs, neutral and amino-acid substitution matrices
-# codon_matrix, check, model
 calculate_cost_matrix(SeqPredNN_codon_matrix, SeqPredNN_check, "SeqPredNN")
 calculate_cost_matrix(Koonin_codon_matrix, Koonin_check, "Koonin")
 calculate_cost_matrix(Higgs_codon_matrix, Higgs_check, "Higgs")
@@ -678,7 +636,6 @@ generate_sample_set(sample_size, amino_acid_sample_code_costs, amino_acid_sample
 generate_sample_set(sample_size, PAM250_sample_code_costs, PAM250_sample_code_costs_NORM, PAM250_code_cost, PAM250_code_cost_NORM, "PAM250", neutral_code_cost, neutral_code_cost_NORM, dimension)
 
 # #generate .csv files
-
 store_cost_matrices(mode, "SeqPredNN", SeqPredNN_codon_matrix)
 store_cost_matrices(mode, "SeqPredNN_NORM", SeqPredNN_codon_matrix_NORM)
 store_cost_matrices(mode, "Koonin", Koonin_codon_matrix)
